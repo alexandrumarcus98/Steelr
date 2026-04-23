@@ -1,12 +1,11 @@
-import './styles/App.scss';
+import "@css/App.css";
 
 function App() {
-  return (
-    <div className="app">
-      <h1>alexr</h1>
-      <p>Welcome to the alexr application.</p>
-    </div>
-  );
+	return (
+		<div className="app">
+			<h1>alexr</h1>
+			<p>Welcome to the alexr application.</p>
+		</div>
+	);
 }
-
 export default App;

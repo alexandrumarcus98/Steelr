@@ -1,0 +1,180 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Sora:wght@600;700&display=swap");
+
+.login-page {
+	--page-bg-start: #f7fbff;
+	--page-bg-end: #e9f2ff;
+	--card-border: #d6e7ff;
+	--heading: #1f3564;
+	--text: #5572a3;
+	--input-bg: #ffffff;
+	--input-border: #c8dcff;
+	--focus: #4f8bff;
+	--button-start: #3f86ff;
+	--button-end: #56c2ff;
+	--button-shadow: rgba(64, 126, 255, 0.32);
+	--link: #2f6df2;
+	--error: #cf335a;
+
+	min-height: 100vh;
+	width: 100%;
+	display: grid;
+	place-items: center;
+	padding: 32px 16px;
+	font-family: "Manrope", "Segoe UI", sans-serif;
+	background:
+		radial-gradient(circle at 12% 18%, rgba(101, 170, 255, 0.24), transparent 52%),
+		radial-gradient(circle at 88% 72%, rgba(84, 220, 255, 0.2), transparent 48%),
+		linear-gradient(150deg, var(--page-bg-start), var(--page-bg-end));
+}
+
+.login-card {
+	width: min(100%, 460px);
+	padding: 42px 34px 34px;
+	border: 1px solid var(--card-border);
+	border-radius: 24px;
+	background: rgba(255, 255, 255, 0.84);
+	backdrop-filter: blur(3px);
+	box-shadow:
+		0 24px 44px rgba(53, 104, 199, 0.16),
+		0 2px 0 rgba(255, 255, 255, 0.7) inset;
+	animation: card-in 420ms ease-out;
+}
+
+.login-logo {
+	width: 46px;
+	height: 46px;
+	border-radius: 14px;
+	margin: 0 auto 22px;
+	display: grid;
+	place-items: center;
+	color: #ffffff;
+	font: 700 0.95rem/1 "Sora", sans-serif;
+	letter-spacing: 0.04em;
+	background: linear-gradient(135deg, #4f8bff, #5fd0ff);
+	box-shadow: 0 10px 24px rgba(79, 139, 255, 0.34);
+}
+
+.login-card h1 {
+	margin-bottom: 24px;
+	text-align: center;
+	color: var(--heading);
+	font: 700 clamp(1.45rem, 3vw, 1.75rem) / 1.2 "Sora", sans-serif;
+}
+
+.login-form {
+	display: grid;
+	gap: 18px;
+}
+
+.form-group label {
+	display: inline-block;
+	margin-bottom: 8px;
+	color: var(--heading);
+	font-size: 0.92rem;
+	font-weight: 700;
+}
+
+.label-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.forgot-link,
+.signup-copy a {
+	color: var(--link);
+	text-decoration: none;
+	font-size: 0.86rem;
+	font-weight: 700;
+}
+
+.forgot-link:hover,
+.signup-copy a:hover {
+	text-decoration: underline;
+}
+
+.form-group input {
+	width: 100%;
+	border: 1px solid var(--input-border);
+	border-radius: 12px;
+	background: var(--input-bg);
+	color: var(--heading);
+	padding: 0.8rem 0.95rem;
+	font-size: 0.95rem;
+	font-family: inherit;
+	transition: border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.form-group input::placeholder {
+	color: #8da7d1;
+}
+
+.form-group input:focus {
+	outline: none;
+	border-color: var(--focus);
+	box-shadow: 0 0 0 3px rgba(93, 157, 255, 0.2);
+}
+
+.error-text {
+	margin-top: 6px;
+	color: var(--error);
+	font-size: 0.84rem;
+	font-weight: 700;
+}
+
+.submit-btn {
+	margin-top: 8px;
+	border: 0;
+	border-radius: 12px;
+	padding: 0.9rem 1rem;
+	color: #ffffff;
+	font: 700 0.98rem/1 "Sora", sans-serif;
+	background: linear-gradient(95deg, var(--button-start), var(--button-end));
+	box-shadow: 0 12px 28px -8px var(--button-shadow);
+	cursor: pointer;
+	transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+.submit-btn:hover {
+	transform: translateY(-1px);
+	filter: saturate(1.06);
+	box-shadow: 0 16px 30px -10px var(--button-shadow);
+}
+
+.submit-btn:disabled {
+	opacity: 0.72;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.signup-copy {
+	margin-top: 22px;
+	text-align: center;
+	color: var(--text);
+	font-size: 0.92rem;
+	font-weight: 600;
+}
+
+@keyframes card-in {
+	from {
+		opacity: 0;
+		transform: translateY(12px) scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (max-width: 520px) {
+	.login-card {
+		padding: 30px 20px 24px;
+		border-radius: 18px;
+	}
+
+	.login-card h1 {
+		font-size: 1.35rem;
+	}
+}
