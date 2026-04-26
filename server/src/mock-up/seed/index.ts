@@ -1,170 +1,139 @@
 import "@/config/env";
+import { faker } from "@faker-js/faker";
 import bcrypt from "bcryptjs";
+import mongoose from "mongoose";
+
 import { connectToDatabase, disconnectFromDatabase } from "@/config/database";
-import { PostModel, UserModel, ViewModel } from "@/models";
+import { PostModel, UserModel, ViewModel, CommentModel } from "@/models";
 
 const SALT_ROUNDS = 12;
+const USER_COUNT = 50;    // tweak to 100, 200, etc.
+const POST_COUNT = 100;
+const COMMENTS_PER_POST_MIN = 2;
+const COMMENTS_PER_POST_MAX = 15;
 
 const seedData = async () => {
 	try {
 		await connectToDatabase();
 		console.log("Connected to database");
 
-		// Seed deterministic users with known plaintext credentials.
-		const seedUsers = [
-			{
-				username: "alice_user",
-				email: "alice@example.com",
-				password: "alice12345",
-			},
-			{
-				username: "bob_user",
-				email: "bob@example.com",
-				password: "bob12345",
-			},
-			{
-				username: "carol_user",
-				email: "carol@example.com",
-				password: "carol12345",
-			},
-		] as const;
+		// 1) Create many users
+		const userDocs = Array.from({ length: USER_COUNT }).map(() => {
+			const firstName = faker.person.firstName();
+			const lastName = faker.person.lastName();
+			return {
+				username: faker.internet.username({ firstName, lastName }).toLowerCase(),
+				email: faker.internet.email({ firstName, lastName }).toLowerCase(),
+				passwordHash: bcrypt.hashSync("password123", SALT_ROUNDS), // known password for testing
+				isVerified: true,
+				isActive: true,
+			};
+		});
 
+		// Upsert users by email
 		const users = await Promise.all(
-			seedUsers.map(async (seedUser) => {
-				const passwordHash = await bcrypt.hash(seedUser.password, SALT_ROUNDS);
-
-				return UserModel.findOneAndUpdate(
-					{ email: seedUser.email },
-					{
-						username: seedUser.username,
-						email: seedUser.email,
-						passwordHash,
-						isVerified: true,
-						isActive: true,
-					},
-					{ upsert: true, returnDocument: "after", runValidators: true, setDefaultsOnInsert: true }
-				).exec();
-			})
+			userDocs.map((u) =>
+				UserModel.findOneAndUpdate(
+					{ email: u.email },
+					u,
+					{ upsert: true, returnDocument: "after", setDefaultsOnInsert: true }
+				).exec()
+			)
 		);
+		console.log(`Created ${users.length} users`);
 
-		// Create sample posts
-		const postsData = [
-			{
-				author: users[0]._id,
-				content: "Just finished an amazing project! Feeling productive today 🚀",
-				visibility: "public",
-				likesCount: 45,
-				commentsCount: 8,
-			},
-			{
-				author: users[1]._id,
-				content: "Weather is beautiful today, perfect for a walk in the park ☀️",
-				visibility: "public",
-				likesCount: 32,
-				commentsCount: 5,
-			},
-			{
-				author: users[2]._id,
-				content: "Just launched my new portfolio website! Check it out and let me know your thoughts 💼",
-				visibility: "public",
-				likesCount: 78,
-				commentsCount: 12,
-			},
-			{
-				author: users[0]._id,
-				content: "Learning TypeScript has been a game-changer for my development skills 📚",
-				visibility: "public",
-				likesCount: 92,
-				commentsCount: 15,
-			},
-			{
-				author: users[1]._id,
-				content: "Coffee and code - the perfect combination for a productive morning ☕",
-				visibility: "public",
-				likesCount: 56,
-				commentsCount: 10,
-			},
-			{
-				author: users[2]._id,
-				content: "Just got approved for my first tech talk at a conference! So excited! 🎤",
-				visibility: "public",
-				likesCount: 110,
-				commentsCount: 20,
-			},
-			{
-				author: users[0]._id,
-				content: "Open source contributions are a great way to learn and give back to the community 🌍",
-				visibility: "public",
-				likesCount: 67,
-				commentsCount: 14,
-			},
-			{
-				author: users[1]._id,
-				content: "Finally fixed that bug that has been haunting me for days! 🐛",
-				visibility: "public",
-				likesCount: 88,
-				commentsCount: 18,
-			},
-			{
-				author: users[2]._id,
-				content: "Excited to announce I'm joining a new startup as a Senior Developer! 🎉",
-				visibility: "public",
-				likesCount: 145,
-				commentsCount: 35,
-			},
-			{
-				author: users[0]._id,
-				content: "Just discovered this amazing library that makes state management so much easier 💪",
-				visibility: "public",
-				likesCount: 73,
-				commentsCount: 11,
-			},
-		];
+		// 2) Create many posts
+		const postContents = Array.from({ length: POST_COUNT }).map(() => ({
+			content: faker.lorem.paragraph({ min: 1, max: 3 }),
+			visibility: "public" as const,
+			likesCount: faker.number.int({ min: 0, max: 500 }),
+			commentsCount: 0, // will sync later
+			viewsCount: 0,
+			createdAt: faker.date.recent({ days: 30 }),
+			updatedAt: faker.date.recent({ days: 30 }),
+		}));
 
-		const posts = await PostModel.create(postsData);
+		const posts = await Promise.all(
+			postContents.map((p, i) =>
+				PostModel.create({
+					...p,
+					author: users[i % users.length]._id,
+				})
+			)
+		);
 		console.log(`Created ${posts.length} posts`);
 
-		// Create views with different counts per post
-		const viewCounts = [120, 95, 180, 210, 75, 250, 130, 160, 280, 110];
+		// 3) Bulk create views (random users viewing random posts)
+		const allViews: any[] = [];
+		const allComments: any[] = [];
 
-		for (let i = 0; i < posts.length; i++) {
-			const post = posts[i];
-			const viewCount = viewCounts[i];
-
-			// Create views from random users
-			for (let v = 0; v < viewCount; v++) {
-				const randomUser = users[Math.floor(Math.random() * users.length)];
-				try {
-					// Use upsert to avoid duplicates
-					await ViewModel.updateOne(
-						{ post: post._id, user: randomUser._id },
-						{
-							post: post._id,
-							user: randomUser._id,
-							createdAt: new Date(
-								Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
-							), // Last 7 days
-						},
-						{ upsert: true }
-					);
-				} catch (err) {
-					// Ignore duplicate key errors
-				}
+		for (const post of posts) {
+			// Views: random number of unique users
+			const viewCount = faker.number.int({ min: 5, max: 300 });
+			const viewerIds = new Set<string>();
+			while (viewerIds.size < Math.min(viewCount, users.length)) {
+				viewerIds.add(users[faker.number.int({ min: 0, max: users.length - 1 })]._id.toString());
+			}
+			for (const userId of viewerIds) {
+				allViews.push({
+					post: post._id,
+					user: new mongoose.Types.ObjectId(userId),
+					createdAt: faker.date.recent({ days: 60 }),
+				});
 			}
 
-			// Update post views count
-			const actualViews = await ViewModel.countDocuments({ post: post._id });
-			await PostModel.findByIdAndUpdate(post._id, { viewsCount: actualViews });
+			// Comments: random count per post
+			const commentCount = faker.number.int({
+				min: COMMENTS_PER_POST_MIN,
+				max: COMMENTS_PER_POST_MAX,
+			});
+			for (let c = 0; c < commentCount; c++) {
+				const author = users[faker.number.int({ min: 0, max: users.length - 1 })];
+				allComments.push({
+					post: post._id,
+					author: author._id,
+					content: faker.lorem.sentences({ min: 1, max: 3 }),
+					createdAt: faker.date.recent({ days: 60 }),
+				});
+			}
 		}
 
-		console.log("Created views for all posts");
+		// Clear old seed data then bulk insert
+		await Promise.all([ViewModel.deleteMany({}), CommentModel.deleteMany({})]);
 
-		// Verify data
-		const postCount = await PostModel.countDocuments();
-		const viewCount = await ViewModel.countDocuments();
+		try {
+			await ViewModel.insertMany(allViews, { ordered: false });
+		} catch (err: any) {
+			if (err.code !== 11000) throw err;
+		}
+		await CommentModel.insertMany(allComments, { ordered: false });
+		console.log(`Inserted ${allViews.length} views, ${allComments.length} comments`);
+
+		// 4) Sync counters
+		await Promise.all(
+			posts.map(async (post) => {
+				const [actualViews, actualComments] = await Promise.all([
+					ViewModel.countDocuments({ post: post._id }),
+					CommentModel.countDocuments({ post: post._id }),
+				]);
+				await PostModel.findByIdAndUpdate(post._id, {
+					viewsCount: actualViews,
+					commentsCount: actualComments,
+				});
+			})
+		);
+		console.log("Counters synced");
+
+		const [postCount, viewCount, commentCount] = await Promise.all([
+			PostModel.countDocuments(),
+			ViewModel.countDocuments(),
+			CommentModel.countDocuments(),
+		]);
+
 		console.log(`\nSeed completed!`);
 		console.log(`Total posts: ${postCount}`);
 		console.log(`Total views: ${viewCount}`);
+		console.log(`Total comments: ${commentCount}`);
 
 		await disconnectFromDatabase();
 		console.log("Disconnected from database");

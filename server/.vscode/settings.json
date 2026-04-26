@@ -6,10 +6,11 @@
 	"prettier.requireConfig": true,
 	"prettier.useEditorConfig": true,
 	"editor.fontSize": 13.5,
+	"terminal.integrated.fontSize": 13.5,
 	"search.exclude": {
 		"**/node_modules": true,
 		"**/bower_components": true,
 		"**/*.code-search": true,
-		"dist": true
+		"**/dist": true
 	}
 }

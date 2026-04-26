@@ -109,3 +109,31 @@ export const unlikePost = async (postId: string, userId: string) => {
 		await PostModel.updateOne({ _id: postId }, { $inc: { likesCount: -1 } });
 	}
 };
+export const getDashboardStats = async (userId: string) => {
+	const totalPosts = await PostModel.countDocuments({ author: userId });
+
+	const authorId = new mongoose.Types.ObjectId(userId);
+
+	const totalViews = await PostModel.aggregate([
+		{ $match: { author: authorId } },
+		{ $group: { _id: null, total: { $sum: "$viewsCount" } } },
+	]).then((res) => res[0]?.total ?? 0);
+
+	const totalLikes = await PostModel.aggregate([
+		{ $match: { author: authorId } },
+		{ $group: { _id: null, total: { $sum: "$likesCount" } } },
+	]).then((res) => res[0]?.total ?? 0);
+
+	const recentPosts = await PostModel.find({ author: userId })
+		.populate("author", "username email _id")
+		.sort({ createdAt: -1 })
+		.limit(5)
+		.lean();
+
+	return {
+		totalPosts,
+		totalViews,
+		totalLikes,
+		recentPosts,
+	};
+};

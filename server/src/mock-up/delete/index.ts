@@ -1,7 +1,6 @@
 import "@/config/env";
 import { connectToDatabase, disconnectFromDatabase } from "@/config/database";
-import { PostModel, UserModel, ViewModel } from "@/models";
-
+import { PostModel, UserModel, ViewModel, CommentModel } from "@/models";
 const deleteData = async () => {
 	try {
 		await connectToDatabase();
@@ -11,7 +10,8 @@ const deleteData = async () => {
 		await UserModel.deleteMany({});
 		await PostModel.deleteMany({});
 		await ViewModel.deleteMany({});
-		console.log("Cleared existing posts, users and views");
+		await CommentModel.deleteMany({});
+		console.log("Cleared existing posts, users, views and comments");
 	} catch (error) {
 		console.error("Error deleting data:", error);
 	} finally {

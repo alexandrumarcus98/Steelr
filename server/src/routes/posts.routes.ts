@@ -29,4 +29,6 @@ router.post("/:id/unlike", authenticate, postsController.unlikePost);
 // GET /posts/:id - Get a single post
 router.get("/:id", authenticate, postsController.getPost);
 
+router.get("/dashboard/stats", authenticate, postsController.getDashboardStats);
+
 export default router;

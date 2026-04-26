@@ -143,3 +143,17 @@ export const unlikePost = async (req: Request, res: Response, next: NextFunction
 		next(err);
 	}
 };
+
+export const getDashboardStats = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const userId = req.user?.id;
+		if (!userId) {
+			res.status(401).json({ error: "Authentication required" });
+			return;
+		}
+		const stats = await postsService.getDashboardStats(userId);
+		res.json({ data: stats });
+	} catch (error) {
+		next(error);
+	}
+};
