@@ -1,11 +1,12 @@
-import { Link } from "react-router-dom";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
+
 import { useAuth } from "@/providers/auth";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
 	fetchMostViewedPosts,
 	fetchLastVisitedPosts,
-} from "@/store/postsSlice";
+} from "@/store/api/postsApi";
 
 function App() {
 	const { isAuthenticated } = useAuth();
@@ -21,8 +22,8 @@ function App() {
 
 	useEffect(() => {
 		if (isAuthenticated) {
-			dispatch(fetchMostViewedPosts(10));
-			dispatch(fetchLastVisitedPosts(10));
+			dispatch(fetchMostViewedPosts(3));
+			dispatch(fetchLastVisitedPosts(3));
 		}
 	}, [isAuthenticated, dispatch]);
 

@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
+
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchPosts, likePost, unlikePost, setSort } from "@/store/postsSlice";
+import { fetchPosts, likePost, unlikePost } from "@/store/api/postsApi";
+import { setSort } from "@/store/slices/postsSlice";
 import { PostCard } from "../../components/posts/PostCard";
 
 const Feed: React.FC = () => {

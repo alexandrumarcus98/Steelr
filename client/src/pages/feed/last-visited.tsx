@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchLastVisitedPosts } from "@/store/postsSlice";
+import { fetchLastVisitedPosts } from "@/store/api/postsApi";
 import { useAuth } from "@/providers/auth";
 
 const LastVisitedPosts = () => {

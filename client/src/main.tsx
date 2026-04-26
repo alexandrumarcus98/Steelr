@@ -3,25 +3,27 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Provider } from "react-redux";
+
+import { RequireGuest } from "@/components/auth/require-guest";
+import { AuthProvider } from "@/providers/auth";
+import RequireAuth from "@/components/auth/require-auth";
+import { store } from "@/store";
+
+import DefaultLayout from "@/providers/layouts/default";
+import FullLayout from "@/providers/layouts/full";
+
 import App from "@/App";
-import Login from "@/components/login";
-import Register from "@/components/register";
-import RecoverPassword from "@/components/recover-password";
-import ResetPassword from "@/components/reset-password";
-import Dashboard from "@/components/dashboard";
+import Login from "@/pages/login";
+import Register from "@/pages/register";
+import RecoverPassword from "@/pages/recover-password";
+import ResetPassword from "@/pages/reset-password";
+import Dashboard from "@/pages/dashboard";
 import Feed from "@/pages/feed";
 import MostViewedPosts from "@/pages/feed/most-viewed";
 import LastVisitedPosts from "@/pages/feed/last-visited";
 import PostPage from "@/pages/post/post-page";
-import Conversations from "@/components/conversations";
-import Profile from "@/components/profile";
+import Profile from "@/pages/user/profile";
 import Users from "@/components/users";
-import RequireAuth from "@/components/auth/RequireAuth";
-import DefaultLayout from "@/providers/layouts/default";
-import FullLayout from "@/providers/layouts/full";
-import { RequireGuest } from "@/components/auth/RequireGuest";
-import { AuthProvider } from "@/providers/auth";
-import { store } from "@/store";
 
 import "@/assets/css/App.css";
 import "@/assets/sass/index.scss";
@@ -53,7 +55,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 									path="posts/last-visited"
 									element={<LastVisitedPosts />}
 								/>
-								<Route path="conversations" element={<Conversations />} />
 								<Route path="profile" element={<Profile />} />
 								<Route path="users" element={<Users />} />
 								<Route path="posts/:id" element={<PostPage />} />

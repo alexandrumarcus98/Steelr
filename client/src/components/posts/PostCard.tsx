@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import type { PostItem } from "@/store/types";
+
+import type { PostItem } from "@/store/types/posts";
 
 type PostCardProps = {
 	post: PostItem;

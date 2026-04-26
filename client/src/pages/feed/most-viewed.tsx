@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { fetchMostViewedPosts } from "@/store/postsSlice";
+import { fetchMostViewedPosts } from "@/store/api/postsApi";
 
 const MostViewedPosts = () => {
 	const dispatch = useAppDispatch();

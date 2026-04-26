@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "@/store/hooks";
+
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchDashboardStats } from "@/store/api/dashboardApi";
 
 const dashboardNavItems = [
 	"Overview",
@@ -13,36 +15,24 @@ const dashboardNavItems = [
 
 const Dashboard: React.FC = () => {
 	const [activeTab, setActiveTab] = useState("Analytics");
-	const posts = useAppSelector((state) => state.posts.items);
-	const conversations = useAppSelector((state) => state.conversations.items);
+	const dispatch = useAppDispatch();
 
-	const totalPosts = posts.length;
-	const totalViews = posts.reduce(
-		(sum, post) => sum + (post.viewsCount ?? 0),
-		0,
-	);
-	const totalLikes = posts.reduce(
-		(sum, post) => sum + (post.likesCount ?? 0),
-		0,
-	);
-	const unreadConversations = conversations.reduce(
-		(sum, conversation) => sum + (conversation.unreadCount ?? 0),
-		0,
-	);
+	const { stats, status, error } = useAppSelector((state) => state.dashboard);
+
+	useEffect(() => {
+		dispatch(fetchDashboardStats());
+	}, [dispatch]);
+
+	const totalPosts = stats?.totalPosts ?? 0;
+	const totalViews = stats?.totalViews ?? 0;
+	const totalLikes = stats?.totalLikes ?? 0;
+	const recentPosts = stats?.recentPosts ?? [];
 
 	const quickStats = [
 		{ label: "Total Posts", value: totalPosts.toLocaleString() },
 		{ label: "Total Views", value: totalViews.toLocaleString() },
 		{ label: "Total Likes", value: totalLikes.toLocaleString() },
-		{
-			label: "Unread Conversations",
-			value: unreadConversations.toLocaleString(),
-		},
 	];
-
-	const recentPostTitles = posts
-		.slice(0, 5)
-		.map((post) => post.title || post.content.slice(0, 80));
 
 	return (
 		<div className="space-y-6">
@@ -85,11 +75,17 @@ const Dashboard: React.FC = () => {
 							{stat.label}
 						</p>
 						<h2 className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
-							{stat.value}
+							{status === "loading" ? "..." : stat.value}
 						</h2>
 					</article>
 				))}
 			</section>
+
+			{error && (
+				<div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+					{error}
+				</div>
+			)}
 
 			<section className="grid gap-4 lg:grid-cols-2">
 				<article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300">
@@ -105,12 +101,6 @@ const Dashboard: React.FC = () => {
 						>
 							Open feed and browse posts
 						</Link>
-						<Link
-							to="/conversations"
-							className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-white"
-						>
-							Open conversations inbox
-						</Link>
 					</div>
 				</article>
 
@@ -118,21 +108,34 @@ const Dashboard: React.FC = () => {
 					<h3 className="mb-4 text-base font-semibold text-gray-900">
 						Recent posts snapshot
 					</h3>
+
+					{status === "loading" && recentPosts.length === 0 && (
+						<p className="text-sm text-gray-500">Loading...</p>
+					)}
+
 					<ul className="space-y-2">
-						{recentPostTitles.length > 0 ? (
-							recentPostTitles.map((title) => (
-								<li
-									key={title}
-									className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700"
-								>
-									{title}
-								</li>
-							))
-						) : (
-							<li className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-								No posts loaded yet. Visit feed to fetch data.
-							</li>
-						)}
+						{recentPosts.length > 0
+							? recentPosts.map((post) => (
+									<li key={post.id ?? post._id}>
+										<Link
+											to={`/posts/${post.id ?? post._id}`}
+											className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-white"
+										>
+											<span className="truncate pr-2">
+												{post.content?.slice(0, 80) || "Untitled post"}
+												{post.content && post.content.length > 80 ? "..." : ""}
+											</span>
+											<span className="shrink-0 text-xs text-gray-500">
+												{post.viewsCount ?? 0} views
+											</span>
+										</Link>
+									</li>
+								))
+							: status !== "loading" && (
+									<li className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+										No posts loaded yet. Visit feed to fetch data.
+									</li>
+								)}
 					</ul>
 				</article>
 			</section>

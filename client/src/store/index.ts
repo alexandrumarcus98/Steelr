@@ -1,11 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
-import postsReducer from "@/store/postsSlice";
-import conversationsReducer from "@/store/conversationsSlice";
+
+import postsReducer from "@/store/slices/postsSlice";
+import commentsReducer from "@/store/slices/commentsSlice";
+import dashboardReducer from "@/store/slices/dashboardSlice";
 
 export const store = configureStore({
 	reducer: {
 		posts: postsReducer,
-		conversations: conversationsReducer,
+		comments: commentsReducer,
+		dashboard: dashboardReducer,
 	},
 });
 

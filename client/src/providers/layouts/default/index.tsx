@@ -47,12 +47,6 @@ const DefaultLayout: React.FC = () => {
 									>
 										Feed
 									</Link>
-									<Link
-										to="/conversations"
-										className="rounded-md px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-gray-100"
-									>
-										Conversations
-									</Link>
 									{user?.roles?.includes("admin") && (
 										<Link
 											to="/users"
