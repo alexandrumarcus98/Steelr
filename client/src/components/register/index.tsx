@@ -2,11 +2,11 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../../providers/auth";
+import { useAuth } from "@/providers/auth";
 import {
 	registerSchema,
 	type RegisterFormData,
-} from "@components/auth/validation";
+} from "@/components/auth/validation";
 
 const Register: React.FC = () => {
 	const { register: registerUser } = useAuth();

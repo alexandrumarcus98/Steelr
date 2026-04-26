@@ -2,8 +2,8 @@ import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../../providers/auth";
-import { loginSchema, type LoginFormData } from "@components/auth/validation";
+import { useAuth } from "@/providers/auth";
+import { loginSchema, type LoginFormData } from "@/components/auth/validation";
 
 const Login: React.FC = () => {
 	const { login } = useAuth();

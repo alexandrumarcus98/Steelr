@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { fetchPosts, likePost, setSort } from "../../store/postsSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchPosts, likePost, unlikePost, setSort } from "@/store/postsSlice";
+import { PostCard } from "../../components/posts/PostCard";
 
 const Feed: React.FC = () => {
 	const dispatch = useAppDispatch();
@@ -14,6 +15,14 @@ const Feed: React.FC = () => {
 
 	const handleLoadMore = () => {
 		dispatch(fetchPosts({ sort, page: page + 1, limit }));
+	};
+
+	const handleToggleLike = (id: string, isLiked: boolean) => {
+		if (isLiked) {
+			dispatch(unlikePost(id));
+		} else {
+			dispatch(likePost(id));
+		}
 	};
 
 	return (
@@ -69,47 +78,9 @@ const Feed: React.FC = () => {
 				</div>
 			)}
 
-			<div className="space-y-3">
-				{items.map((post) => (
-					<article
-						key={post.id}
-						className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5"
-					>
-						<div className="mb-2 flex items-center justify-between gap-2">
-							<p className="text-sm font-medium text-gray-700">
-								{post.author?.username || "Unknown author"}
-							</p>
-							{post.createdAt && (
-								<p className="text-xs text-gray-500">
-									{new Date(post.createdAt).toLocaleString()}
-								</p>
-							)}
-						</div>
-
-						{post.title && (
-							<h2 className="text-lg font-semibold tracking-tight text-gray-900">
-								{post.title}
-							</h2>
-						)}
-						<p className="mt-2 text-sm leading-6 text-gray-700">
-							{post.content}
-						</p>
-
-						<div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-gray-500">
-							<span>{post.viewsCount ?? 0} views</span>
-							<span>{post.likesCount ?? 0} likes</span>
-							<span>{post.commentsCount ?? 0} comments</span>
-							<button
-								type="button"
-								onClick={() => dispatch(likePost(post.id))}
-								className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 transition-all duration-300 hover:bg-gray-100"
-							>
-								{post.isLiked ? "Liked" : "Like"}
-							</button>
-						</div>
-					</article>
-				))}
-			</div>
+			{items.map((post) => (
+				<PostCard key={post.id} post={post} onToggleLike={handleToggleLike} />
+			))}
 
 			{hasMore && items.length > 0 && (
 				<div className="flex justify-center">

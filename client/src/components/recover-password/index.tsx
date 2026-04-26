@@ -2,12 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import api from "../../lib/api";
-import { PASSWORD_RECOVERY_ENDPOINT } from "../../lib/authEndpoints";
+import api from "@/lib/api";
+import { PASSWORD_RECOVERY_ENDPOINT } from "@/lib/authEndpoints";
 import {
 	recoverPasswordSchema,
 	type RecoverPasswordFormData,
-} from "@components/auth/validation";
+} from "@/components/auth/validation";
 
 const RecoverPassword: React.FC = () => {
 	const [successMessage, setSuccessMessage] = React.useState<string | null>(

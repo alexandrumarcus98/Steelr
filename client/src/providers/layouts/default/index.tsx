@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet, Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../auth";
+import { useAuth } from "@/providers/auth";
 
 const DefaultLayout: React.FC = () => {
 	const { user, logout, isAuthenticated } = useAuth();

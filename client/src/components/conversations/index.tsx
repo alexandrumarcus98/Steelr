@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
 	fetchConversations,
 	selectConversation,
-} from "../../store/conversationsSlice";
+} from "@/store/conversationsSlice";
 
 const Conversations: React.FC = () => {
 	const dispatch = useAppDispatch();

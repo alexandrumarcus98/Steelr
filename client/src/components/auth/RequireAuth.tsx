@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "../../providers/auth";
+import { useAuth } from "@/providers/auth";
 
 const RequireAuth: React.FC = () => {
 	const { isAuthenticated, loading } = useAuth();

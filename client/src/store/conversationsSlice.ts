@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import api from "../lib/api";
-import type { ConversationItem } from "./types";
+import api from "@/lib/api";
+import type { ConversationItem } from "@/store/types";
 
 const CONVERSATIONS_ENDPOINT =
 	import.meta.env.VITE_CONVERSATIONS_ENDPOINT || "/conversations";

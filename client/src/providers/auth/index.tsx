@@ -5,7 +5,7 @@ import React, {
 	useEffect,
 	ReactNode,
 } from "react";
-import api, { setAuthToken } from "../../lib/api";
+import api, { setAuthToken } from "@/lib/api";
 
 interface User {
 	id: string;
@@ -56,7 +56,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				setAuthToken(token);
 				try {
 					const { data } = await api.get("/auth/me");
-					setUser(data);
+					console.log(data);
+					console.log("Authenticated user:", data.user);
+					setUser(data.user);
 				} catch (error) {
 					// Token invalid, clear it
 					setTokenState(null);

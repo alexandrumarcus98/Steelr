@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../../providers/auth";
-import api from "../../lib/api";
+import { useAuth } from "@/providers/auth";
+import api from "@/lib/api";
 
 interface User {
 	id: string;

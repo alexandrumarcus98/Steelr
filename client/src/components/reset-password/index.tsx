@@ -2,12 +2,12 @@ import React from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import api from "../../lib/api";
-import { PASSWORD_RESET_ENDPOINT } from "../../lib/authEndpoints";
+import api from "@/lib/api";
+import { PASSWORD_RESET_ENDPOINT } from "@/lib/authEndpoints";
 import {
 	resetPasswordSchema,
 	type ResetPasswordFormData,
-} from "@components/auth/validation";
+} from "@/components/auth/validation";
 
 const ResetPassword: React.FC = () => {
 	const [searchParams] = useSearchParams();
