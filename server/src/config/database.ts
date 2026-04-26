@@ -4,7 +4,9 @@ const getMongoUri = (): string => {
 	const mongoUri = process.env.MONGODB_URI;
 
 	if (!mongoUri) {
-		throw new Error("Missing MONGODB_URI environment variable");
+		throw new Error(
+			"Missing MONGODB_URI environment variable. Set it in server/.env or export it before running commands like `pnpm seed`."
+		);
 	}
 
 	return mongoUri;

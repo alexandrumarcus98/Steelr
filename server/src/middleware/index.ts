@@ -1,6 +1,6 @@
-export { authenticate } from "./auth.middleware";
+export { authenticate } from "@/middleware/auth.middleware";
 export {
 	requireOwnership,
 	requireRoles,
 	requireVerifiedUser,
-} from "./rbac.middleware";
+} from "@/middleware/rbac.middleware";

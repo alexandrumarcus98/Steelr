@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt, { type JwtPayload } from "jsonwebtoken";
-import { UserModel, type UserRole } from "../models";
-import type { AuthUser } from "../types/auth";
+import { UserModel, type UserRole } from "@/models";
+import type { AuthUser } from "@/types/auth";
 
 interface AccessTokenPayload extends JwtPayload {
 	sub: string;

@@ -4,8 +4,8 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
-import { disconnectFromDatabase, connectToDatabase } from "./config/database";
-import router from "./routes";
+import { disconnectFromDatabase, connectToDatabase } from "@/config/database";
+import router from "@/routes";
 
 const app = express();
 const PORT = process.env.PORT || 3001;

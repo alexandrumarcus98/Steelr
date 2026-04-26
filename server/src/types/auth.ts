@@ -1,4 +1,4 @@
-import type { UserRole } from "../models";
+import type { UserRole } from "@/models";
 
 export interface AuthUser {
   id: string;

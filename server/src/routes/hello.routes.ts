@@ -1,9 +1,8 @@
-import { Router, Request, Response } from "express";
+import { Router } from "express";
+import { getHello } from "@/controllers/hello.controller";
 
 const helloRouter = Router();
 
-helloRouter.get("/", (_req: Request, res: Response) => {
-  res.json({ message: "Hello from the server!" });
-});
+helloRouter.get("/", getHello);
 
 export default helloRouter;

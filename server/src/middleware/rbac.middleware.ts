@@ -1,5 +1,5 @@
 import type { Request, RequestHandler } from "express";
-import type { UserRole } from "../models";
+import type { UserRole } from "@/models";
 
 const hasRole = (userRoles: UserRole[], requiredRoles: UserRole[]): boolean => {
   return requiredRoles.some((role) => userRoles.includes(role));
