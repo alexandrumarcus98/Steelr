@@ -1,36 +1,43 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuth } from "../../providers/auth";
+import api from "../../lib/api";
+import { PASSWORD_RESET_ENDPOINT } from "../../lib/authEndpoints";
 import {
-	registerSchema,
-	type RegisterFormData,
+	resetPasswordSchema,
+	type ResetPasswordFormData,
 } from "@components/auth/validation";
 
-const Register: React.FC = () => {
-	const { register: registerUser } = useAuth();
+const ResetPassword: React.FC = () => {
+	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
+	const token = searchParams.get("token") || "";
+	const [successMessage, setSuccessMessage] = React.useState<string | null>(
+		null,
+	);
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors, isSubmitting },
-	} = useForm<RegisterFormData>({
-		resolver: zodResolver(registerSchema),
+	} = useForm<ResetPasswordFormData>({
+		resolver: zodResolver(resetPasswordSchema),
 	});
 
-	const onSubmit = async (data: RegisterFormData) => {
+	const onSubmit = async (data: ResetPasswordFormData) => {
 		try {
-			await registerUser({
-				username: data.username,
-				email: data.email,
+			await api.post(PASSWORD_RESET_ENDPOINT, {
+				token,
 				password: data.password,
+				confirmPassword: data.confirmPassword,
 			});
-			console.log("Registration successful");
-			navigate("/dashboard");
+			setSuccessMessage("Password updated successfully. You can now sign in.");
+			setTimeout(() => navigate("/login", { replace: true }), 1200);
 		} catch (error: any) {
+			setSuccessMessage(null);
 			console.error(
-				"Registration failed:",
+				"Reset password failed:",
 				error.response?.data?.message || error.message,
 			);
 		}
@@ -39,14 +46,20 @@ const Register: React.FC = () => {
 	return (
 		<div className="w-full rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 sm:p-10">
 			<div className="mx-auto mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-xs font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
-				RG
+				RW
 			</div>
-			<h1
-				id="register-title"
-				className="text-center text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl"
-			>
-				Create your account
+			<h1 className="text-center text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
+				Choose a new password
 			</h1>
+			<p className="mt-2 text-center text-sm leading-6 text-gray-600">
+				Enter your new password below to complete the reset process.
+			</p>
+
+			{!token && (
+				<div className="mt-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+					Missing or invalid reset token. Please request a new recovery link.
+				</div>
+			)}
 
 			<form
 				onSubmit={handleSubmit(onSubmit)}
@@ -55,57 +68,15 @@ const Register: React.FC = () => {
 			>
 				<div>
 					<label
-						htmlFor="username"
-						className="mb-1.5 block text-sm font-medium text-gray-700"
-					>
-						Username
-					</label>
-					<input
-						type="text"
-						id="username"
-						placeholder="johndoe"
-						className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-gray-900"
-						{...register("username")}
-					/>
-					{errors.username && (
-						<p className="mt-1.5 text-xs text-red-600">
-							{errors.username.message}
-						</p>
-					)}
-				</div>
-
-				<div>
-					<label
-						htmlFor="email"
-						className="mb-1.5 block text-sm font-medium text-gray-700"
-					>
-						Email address
-					</label>
-					<input
-						type="email"
-						id="email"
-						placeholder="name@company.com"
-						className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-gray-900"
-						{...register("email")}
-					/>
-					{errors.email && (
-						<p className="mt-1.5 text-xs text-red-600">
-							{errors.email.message}
-						</p>
-					)}
-				</div>
-
-				<div>
-					<label
 						htmlFor="password"
 						className="mb-1.5 block text-sm font-medium text-gray-700"
 					>
-						Password
+						New password
 					</label>
 					<input
 						type="password"
 						id="password"
-						placeholder="Create a password"
+						placeholder="Create a new password"
 						className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-gray-900"
 						{...register("password")}
 					/>
@@ -126,7 +97,7 @@ const Register: React.FC = () => {
 					<input
 						type="password"
 						id="confirmPassword"
-						placeholder="Repeat your password"
+						placeholder="Repeat your new password"
 						className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-gray-900"
 						{...register("confirmPassword")}
 					/>
@@ -139,15 +110,21 @@ const Register: React.FC = () => {
 
 				<button
 					type="submit"
-					disabled={isSubmitting}
+					disabled={isSubmitting || !token}
 					className="inline-flex w-full items-center justify-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-black disabled:cursor-not-allowed disabled:opacity-70"
 				>
-					{isSubmitting ? "Creating account..." : "Create account"}
+					{isSubmitting ? "Updating password..." : "Update password"}
 				</button>
 			</form>
 
+			{successMessage && (
+				<div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+					{successMessage}
+				</div>
+			)}
+
 			<p className="mt-6 text-center text-sm text-gray-600">
-				Already have an account?{" "}
+				Remembered your password?{" "}
 				<Link
 					to="/login"
 					className="font-medium text-gray-900 transition-all duration-300 hover:opacity-70"
@@ -159,4 +136,4 @@ const Register: React.FC = () => {
 	);
 };
 
-export default Register;
+export default ResetPassword;

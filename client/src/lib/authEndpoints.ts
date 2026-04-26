@@ -1,0 +1,8 @@
+const DEFAULT_RECOVERY_ENDPOINT = "/auth/recover-password";
+const DEFAULT_RESET_ENDPOINT = "/auth/reset-password";
+
+export const PASSWORD_RECOVERY_ENDPOINT =
+  import.meta.env.VITE_PASSWORD_RECOVERY_ENDPOINT || DEFAULT_RECOVERY_ENDPOINT;
+
+export const PASSWORD_RESET_ENDPOINT =
+  import.meta.env.VITE_PASSWORD_RESET_ENDPOINT || DEFAULT_RESET_ENDPOINT;
