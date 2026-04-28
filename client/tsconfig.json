@@ -7,11 +7,7 @@
 		"ignoreDeprecations": "6.0",
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"],
-			"@sass/*": ["./src/assets/sass/*"],
-			"@css/*": ["./src/assets/css/*"],
-			"@components/*": ["./src/components/*"],
-			"@layouts/*": ["./src/providers/layouts/*"]
+			"@/*": ["./src/*"]
 		},
 		"skipLibCheck": true,
 		"moduleResolution": "bundler",
@@ -26,6 +22,6 @@
 		"noFallthroughCasesInSwitch": true
 	},
 	"include": ["src"],
-	"exclude": ["src/**/*.test.tsx", "src/**/*.test.ts"],
+	"exclude": ["src/**/*.test.tsx", "src/**/*.test.ts", "dist/"],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }
