@@ -1,4 +1,4 @@
-const DEFAULT_RECOVERY_ENDPOINT = "/auth/recover-password";
+const DEFAULT_RECOVERY_ENDPOINT = "/auth/forgot-password";
 const DEFAULT_RESET_ENDPOINT = "/auth/reset-password";
 
 export const PASSWORD_RECOVERY_ENDPOINT =

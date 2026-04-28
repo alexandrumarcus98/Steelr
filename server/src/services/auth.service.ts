@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import type { SignOptions } from "jsonwebtoken";
-import mongoose from "mongoose";
 import { getPasswordResetUrl, sendPasswordResetEmail } from "@/config/mailer";
 import { UserModel, type UserRole } from "@/models";
 import type {
@@ -14,17 +13,12 @@ import type {
   ResetPasswordBody,
 } from "@/types/auth-api";
 import { toUserResponse } from "@/types/user";
+import { isDuplicateKeyError, isValidationError } from "@/utils/errors";
+
+export { isDuplicateKeyError, isValidationError };
 
 const SALT_ROUNDS = 12;
 const RESET_TOKEN_EXPIRES_IN_MS = 15 * 60 * 1000;
-
-export const isDuplicateKeyError = (error: unknown): boolean => {
-  return error instanceof mongoose.Error && "code" in error && error.code === 11000;
-};
-
-export const isValidationError = (error: unknown): boolean => {
-  return error instanceof mongoose.Error.ValidationError;
-};
 
 const getAccessTokenSecret = (): string => {
   const secret = process.env.JWT_ACCESS_SECRET;

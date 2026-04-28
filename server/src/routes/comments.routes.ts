@@ -4,7 +4,7 @@ import * as commentsController from "@/controllers/comments.controller";
 
 const router = Router();
 
-// List comments for a post (public read)
+// List comments for a post (auth required)
 router.get("/posts/:postId/comments", authenticate, commentsController.getCommentsForPost);
 
 // Create comment on a post (auth)

@@ -9,12 +9,12 @@ const POSTS_ENDPOINT = import.meta.env.VITE_POSTS_ENDPOINT || "/posts";
 export const fetchPosts = createAsyncThunk<FetchPostsResult, FetchPostsParams>(
 	"posts/fetchPosts",
 	async ({ sort, page, limit }) => {
-		const { data } = await api.get(POSTS_ENDPOINT, {
+		const endpoint =
+			sort === "mostViewed" ? `${POSTS_ENDPOINT}/most-viewed` : POSTS_ENDPOINT;
+		const { data } = await api.get(endpoint, {
 			params: {
 				page,
 				limit,
-				sortBy: sort === "mostViewed" ? "viewsCount" : "createdAt",
-				sortOrder: "desc",
 			},
 		});
 
@@ -129,7 +129,7 @@ const normalizePost = (raw: Record<string, unknown>): PostItem => ({
 	author:
 		typeof raw.author === "object" && raw.author !== null
 			? {
-					id: String((raw.author as Record<string, unknown>).id ?? ""),
+					id: String((raw.author as Record<string, unknown>).id ?? (raw.author as Record<string, unknown>)._id ?? ""),
 					username:
 						typeof (raw.author as Record<string, unknown>).username === "string"
 							? String((raw.author as Record<string, unknown>).username)

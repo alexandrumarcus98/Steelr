@@ -7,6 +7,14 @@ import {
 	fetchMostViewedPosts,
 	fetchLastVisitedPosts,
 } from "@/store/api/postsApi";
+import type { PostItem } from "@/store/types/posts";
+
+interface PostCardProps {
+	title: string;
+	posts: PostItem[];
+	link: string;
+	status: "idle" | "loading" | "succeeded" | "failed";
+}
 
 function App() {
 	const { isAuthenticated } = useAuth();
@@ -27,7 +35,7 @@ function App() {
 		}
 	}, [isAuthenticated, dispatch]);
 
-	const PostCard = ({ title, posts, link, status }: any) => (
+	const PostCard = ({ title, posts, link, status }: PostCardProps) => (
 		<div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition-all duration-300">
 			<div className="mb-4 flex items-center justify-between">
 				<h3 className="text-lg font-semibold text-gray-900">{title}</h3>
@@ -44,7 +52,7 @@ function App() {
 				</div>
 			) : posts && posts.length > 0 ? (
 				<div className="space-y-3 mb-4">
-					{posts.slice(0, 3).map((post: any) => (
+					{posts.slice(0, 3).map((post) => (
 						<div
 							key={post.id}
 							className="rounded-lg border border-gray-200 bg-gray-50 p-3 hover:bg-gray-100 transition-colors cursor-pointer"

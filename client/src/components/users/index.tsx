@@ -7,7 +7,8 @@ interface User {
 	username: string;
 	email: string;
 	roles: string[];
-	status: string;
+	isActive: boolean;
+	isVerified: boolean;
 }
 
 const Users: React.FC = () => {
@@ -77,7 +78,7 @@ const Users: React.FC = () => {
 									{u.roles?.join(", ") || "user"}
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-									{u.status}
+									{u.isActive ? "Active" : "Inactive"} / {u.isVerified ? "Verified" : "Unverified"}
 								</td>
 								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
 									<button className="text-blue-600 hover:text-blue-900 mr-4">

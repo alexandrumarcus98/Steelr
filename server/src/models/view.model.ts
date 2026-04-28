@@ -19,8 +19,8 @@ const viewSchema = new Schema(
   }
 );
 
-// Index for finding user's last viewed posts
-viewSchema.index({ user: 1, createdAt: -1 });
+// Index for finding user's last viewed posts (sorted by most recent visit)
+viewSchema.index({ user: 1, updatedAt: -1 });
 // Index for counting views per post
 viewSchema.index({ post: 1 });
 // Unique index to prevent duplicate views from same user on same post

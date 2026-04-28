@@ -12,7 +12,8 @@ interface User {
 	username: string;
 	email: string;
 	roles: string[];
-	status: string;
+	isActive: boolean;
+	isVerified: boolean;
 }
 
 interface AuthContextType {
@@ -56,8 +57,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 				setAuthToken(token);
 				try {
 					const { data } = await api.get("/auth/me");
-					console.log(data);
-					console.log("Authenticated user:", data.user);
 					setUser(data.user);
 				} catch (error) {
 					// Token invalid, clear it

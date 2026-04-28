@@ -26,9 +26,10 @@ router.post("/:id/like", authenticate, postsController.likePost);
 // POST /posts/:id/unlike - Toggle unlike on a post
 router.post("/:id/unlike", authenticate, postsController.unlikePost);
 
+// GET /posts/dashboard/stats - Get dashboard statistics (must be before /:id)
+router.get("/dashboard/stats", authenticate, postsController.getDashboardStats);
+
 // GET /posts/:id - Get a single post
 router.get("/:id", authenticate, postsController.getPost);
-
-router.get("/dashboard/stats", authenticate, postsController.getDashboardStats);
 
 export default router;

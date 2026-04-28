@@ -1,6 +1,6 @@
 import "./config/env";
 import cors, { CorsOptions } from "cors";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
@@ -45,6 +45,22 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api", apiLimiter);
 app.use("/api", router);
+
+// Global JSON error handler — must be after all routes
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+	const status =
+		typeof (err as Record<string, unknown>)?.status === "number"
+			? ((err as Record<string, unknown>).status as number)
+			: 500;
+	const message =
+		err instanceof Error ? err.message : "Internal Server Error";
+	const isDev = process.env.NODE_ENV !== "production";
+
+	res.status(status).json({
+		message,
+		...(isDev && err instanceof Error ? { stack: err.stack } : {}),
+	});
+});
 
 const startServer = async (): Promise<void> => {
 	await connectToDatabase();

@@ -96,7 +96,7 @@ const Profile: React.FC = () => {
 							<label className="block text-sm font-medium text-gray-700">
 								Status
 							</label>
-							<p className="mt-1 text-gray-900">{user.status}</p>
+							<p className="mt-1 text-gray-900">{user.isActive ? "Active" : "Inactive"} / {user.isVerified ? "Verified" : "Unverified"}</p>
 						</div>
 					</div>
 				)}

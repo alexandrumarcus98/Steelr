@@ -1,17 +1,11 @@
 import bcrypt from "bcryptjs";
-import mongoose from "mongoose";
 import { UserModel, type UserRole } from "@/models";
 import type { UserStatusUpdateInput, UserUpdateInput } from "@/types/user";
+import { isDuplicateKeyError, isValidationError } from "@/utils/errors";
+
+export { isDuplicateKeyError, isValidationError };
 
 const SALT_ROUNDS = 12;
-
-export const isDuplicateKeyError = (error: unknown): boolean => {
-  return error instanceof mongoose.Error && "code" in error && error.code === 11000;
-};
-
-export const isValidationError = (error: unknown): boolean => {
-  return error instanceof mongoose.Error.ValidationError;
-};
 
 export const findCurrentUser = async (userId?: string) => {
   if (!userId) {

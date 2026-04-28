@@ -29,7 +29,7 @@ This frontend connects to a backend API. Ensure the backend is running and the A
 
 ### Auth Flow
 
-- Register: POST /users/register
+- Register: POST /auth/register
 - Login: POST /auth/login (not implemented yet)
 - Protected routes require JWT token in Authorization header.
 
