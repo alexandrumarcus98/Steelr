@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate, requireOwnership, requireRoles } from "@/middleware";
-import * as usersController from "@/controllers/users.controller";
+import * as usersController from "@/controllers/users-controller/users.controller";
 
 const usersRouter = Router();
 

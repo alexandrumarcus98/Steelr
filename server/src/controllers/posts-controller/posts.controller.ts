@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import * as postsService from "@/services/posts.service";
+import * as postsService from "@/services/posts-service/posts.service";
 import type { CreatePostBody } from "@/types/post";
 
 export const getPosts = async (req: Request, res: Response, next: NextFunction) => {

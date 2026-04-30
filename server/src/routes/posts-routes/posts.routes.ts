@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import { authenticate } from "@/middleware";
-import * as postsController from "@/controllers/posts.controller";
+import * as postsController from "@/controllers/posts-controller/posts.controller";
 
 const router = Router();
 

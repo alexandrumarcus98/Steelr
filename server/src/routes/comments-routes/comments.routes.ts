@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authenticate } from "@/middleware";
-import * as commentsController from "@/controllers/comments.controller";
+import * as commentsController from "@/controllers/comments-controller/comments.controller";
 
 const router = Router();
 

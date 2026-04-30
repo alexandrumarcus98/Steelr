@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import type { UserRole } from "@/models";
 import { toUserResponse } from "@/types/user";
-import * as usersService from "@/services/users.service";
+import * as usersService from "@/services/users-service/users.service";
 
 export const me = async (req: Request, res: Response, _next: NextFunction) => {
 	try {

@@ -6,7 +6,7 @@ import type {
 	ResetPasswordBody,
 } from "@/types/auth-api";
 import { toUserResponse } from "@/types/user";
-import * as authService from "@/services/auth.service";
+import * as authService from "@/services/auth-service/auth.service";
 
 export const register = async (req: Request, res: Response, _next: NextFunction) => {
 	try {
