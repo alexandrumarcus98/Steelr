@@ -40,10 +40,9 @@ The application follows a component-based architecture with:
 
 - `src/` directory contains all source code
 - `src/components/` contains reusable UI components
-- `src/hooks/` contains custom React hooks
-- `src/services/` contains API clients and service logic
-- `src/utils/` contains utility functions
-- `src/types/` contains TypeScript type definitions
+- `src/lib/` contains shared library code and utilities
+- `src/providers/` contains React providers and application-level context setup
+- `src/store/` contains state management logic
 - `src/App.tsx` is the main application component
 - `src/main.tsx` is the entry point
 
