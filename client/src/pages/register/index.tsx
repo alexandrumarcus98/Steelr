@@ -2,7 +2,10 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useAuth } from "@/providers/auth";
+import { useToast } from "@/hooks/useToast";
+
 import {
 	registerSchema,
 	type RegisterFormData,
@@ -19,6 +22,8 @@ const Register: React.FC = () => {
 		resolver: zodResolver(registerSchema),
 	});
 
+	const { error } = useToast();
+
 	const onSubmit = async (data: RegisterFormData) => {
 		try {
 			await registerUser({
@@ -26,13 +31,9 @@ const Register: React.FC = () => {
 				email: data.email,
 				password: data.password,
 			});
-			console.log("Registration successful");
 			navigate("/dashboard");
-		} catch (error: any) {
-			console.error(
-				"Registration failed:",
-				error.response?.data?.message || error.message,
-			);
+		} catch (err: any) {
+			error("Registration failed", err.response?.data?.message || err.message);
 		}
 	};
 

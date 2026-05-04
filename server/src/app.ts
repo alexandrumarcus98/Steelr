@@ -6,12 +6,10 @@ import hpp from "hpp";
 
 import "./config/env";
 
-import { disconnectFromDatabase, connectToDatabase } from "@/config/database";
 import { errorHandler } from "@/middleware";
 import router from "@/routes";
 
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = (
 	process.env.CORS_ORIGINS || "http://localhost:3000,http://localhost:5173"
@@ -49,49 +47,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api", apiLimiter);
 app.use("/api", router);
 app.use(errorHandler); // Must be after all routes
-
-const startServer = async (): Promise<void> => {
-	await connectToDatabase();
-
-	const server = app.listen(PORT, () => {
-		console.log(`Server is running on port ${PORT}`);
-	});
-
-	const shutdown = async (signal: string): Promise<void> => {
-		console.log(`Received ${signal}. Shutting down gracefully...`);
-
-		server.close(async (error) => {
-			if (error) {
-				console.error("Error during server shutdown", error);
-				process.exitCode = 1;
-			}
-
-			try {
-				await disconnectFromDatabase();
-			} catch (dbError) {
-				console.error("Error during DB shutdown", dbError);
-				process.exitCode = 1;
-			}
-
-			process.exit();
-		});
-
-		setTimeout(() => {
-			console.error("Forcing shutdown after timeout");
-			process.exit(1);
-		}, 10000).unref();
-	};
-
-	["SIGINT", "SIGTERM"].forEach((signal) => {
-		process.on(signal, () => {
-			void shutdown(signal);
-		});
-	});
-};
-
-void startServer().catch((error: unknown) => {
-	console.error("Failed to start server", error);
-	process.exit(1);
-});
 
 export default app;

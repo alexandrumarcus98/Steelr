@@ -29,5 +29,19 @@ export interface AuthPayload {
 
 export interface AuthResult {
   accessToken: string;
+  refreshToken?: string;
   user: UserResponse;
+}
+
+export interface LoginResponse {
+  requiresOTP: boolean;
+  message: string;
+  tempEmail?: string;
+  expiresInMinutes?: number;
+}
+
+export interface VerifyOTPResponse extends AuthResult {
+  refreshToken: string;
+  expiresIn: number;
+  message: string;
 }

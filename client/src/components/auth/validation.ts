@@ -69,7 +69,17 @@ export const registerSchema = z
 		}
 	});
 
+export const otpSchema = z.object({
+	email: emailSchema,
+	otp: z
+		.string()
+		.min(6, "OTP must be 6 characters")
+		.max(6, "OTP must be 6 characters")
+		.regex(/^[0-9]+$/, "OTP must contain only numbers"),
+});
+
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type RecoverPasswordFormData = z.infer<typeof recoverPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+export type OTPFormData = z.infer<typeof otpSchema>;

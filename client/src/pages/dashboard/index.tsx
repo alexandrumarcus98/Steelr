@@ -116,9 +116,9 @@ const Dashboard: React.FC = () => {
 					<ul className="space-y-2">
 						{recentPosts.length > 0
 							? recentPosts.map((post) => (
-									<li key={post.id ?? post._id}>
+									<li key={post.id ?? post.id}>
 										<Link
-											to={`/posts/${post.id ?? post._id}`}
+											to={`/posts/${post.id ?? post.id}`}
 											className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700 transition-all duration-300 hover:bg-white"
 										>
 											<span className="truncate pr-2">

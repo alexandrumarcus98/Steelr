@@ -1,8 +1,13 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction, createSelector } from "@reduxjs/toolkit";
 
 import { fetchPosts, fetchMostViewedPosts, fetchLastVisitedPosts, likePost, unlikePost, fetchPostById } from "@/store/api/postsApi";
 
 import type { PostsState, PostSort } from "@/store/types/posts";
+
+export const selectPosts = createSelector(
+	[(state: { posts: PostsState }) => state.posts.items],
+	(items) => items
+);
 
 export const initialState: PostsState = {
 	items: [],
