@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 
 // Global JSON error handler — must be after all routes
 export const errorHandler = (err: unknown, _req: Request, res: Response, _next: NextFunction) => {

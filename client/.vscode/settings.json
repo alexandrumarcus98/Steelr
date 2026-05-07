@@ -14,9 +14,6 @@
 		"**/dist": true
 	},
 	"yaml.schemas": {
-		"file:///home/alexandru-marcus/.vscode/extensions/continue.continue-1.3.38-linux-x64/config-yaml-schema.json": [
-			".continue/**/*.yaml"
-		],
-		"https://www.schemastore.org/projektor.json": "file:///home/alexandru-marcus/.continue/config.yaml"
+		"https://www.schemastore.org/projektor.json": ".continue/config.yaml"
 	}
 }
