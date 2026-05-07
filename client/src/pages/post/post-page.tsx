@@ -26,19 +26,19 @@ const PostPage: React.FC = () => {
 	};
 
 	if (status === "loading" && !post) {
-		return <div className="p-4 text-sm text-gray-600">Loading post...</div>;
+		return <div className="p-4 text-sm text-slate-600 dark:text-slate-400">Loading post...</div>;
 	}
 
 	if (error) {
 		return (
-			<div className="p-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl">
+			<div className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-300">
 				{error}
 			</div>
 		);
 	}
 
 	if (!post) {
-		return <div className="p-4 text-sm text-gray-600">Post not found.</div>;
+		return <div className="p-4 text-sm text-slate-600 dark:text-slate-400">Post not found.</div>;
 	}
 
 	return (

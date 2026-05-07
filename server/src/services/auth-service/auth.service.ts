@@ -70,7 +70,10 @@ const signRefreshToken = (payload: AuthPayload): string => {
 
 export { signRefreshToken };
 
-export const registerUser = async (body: RegisterBody): Promise<AuthResult> => {
+export const registerUser = async (
+	body: RegisterBody,
+	context?: { signupIp?: string },
+): Promise<AuthResult> => {
 	const { username, email, password } = body;
 
 	if (!username || !email || !password) {
@@ -82,7 +85,15 @@ export const registerUser = async (body: RegisterBody): Promise<AuthResult> => {
 	}
 
 	const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-	const user = await UserModel.create({ username, email, passwordHash });
+	const user = await UserModel.create({
+		username,
+		email,
+		passwordHash,
+		signupIp: context?.signupIp ?? null,
+		profileLocation: {
+			source: context?.signupIp ? "signup-ip" : "manual",
+		},
+	});
 	const accessToken = signAccessToken({
 		sub: user.id,
 		roles: user.roles as UserRole[],
@@ -108,7 +119,7 @@ export const validateLoginCredentials = async (
 
 	const user = await UserModel.findOne({ email: email.toLowerCase().trim() })
 		.select(
-			"+passwordHash username email roles isVerified isActive createdAt updatedAt",
+			"+passwordHash username email roles isVerified isActive profileLocation friendIds signupIp createdAt updatedAt",
 		)
 		.exec();
 
@@ -139,7 +150,7 @@ export const loginUser = async (
 
 	const user = await UserModel.findOne({ email: email.toLowerCase().trim() })
 		.select(
-			"+passwordHash username email roles isVerified isActive createdAt updatedAt",
+			"+passwordHash username email roles isVerified isActive profileLocation friendIds signupIp createdAt updatedAt",
 		)
 		.exec();
 
@@ -234,13 +245,34 @@ export const resetPassword = async (body: ResetPasswordBody): Promise<void> => {
 	await user.save();
 };
 
+export const verifyResetPasswordToken = async (token: string): Promise<void> => {
+	if (!token) {
+		throw new Error("token is required");
+	}
+
+	const tokenHash = hashResetToken(token);
+	const user = await UserModel.findOne({
+		resetPasswordTokenHash: tokenHash,
+		resetPasswordExpiresAt: { $gt: new Date() },
+	})
+		.select("_id")
+		.lean()
+		.exec();
+
+	if (!user) {
+		throw new Error("Invalid or expired recovery token");
+	}
+};
+
 export const getCurrentUser = async (userId?: string) => {
 	if (!userId) {
 		return null;
 	}
 
 	return UserModel.findById(userId)
-		.select("username email roles isVerified isActive createdAt updatedAt")
+		.select(
+			"username email roles isVerified isActive profileLocation friendIds signupIp createdAt updatedAt",
+		)
 		.lean()
 		.exec();
 };

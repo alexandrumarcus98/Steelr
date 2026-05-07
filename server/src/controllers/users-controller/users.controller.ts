@@ -18,6 +18,48 @@ export const me = async (req: Request, res: Response, _next: NextFunction) => {
 	}
 };
 
+export const searchUsers = async (
+	req: Request,
+	res: Response,
+	_next: NextFunction,
+) => {
+	try {
+		const currentUserId = req.user?.id;
+
+		if (!currentUserId) {
+			res.status(401).json({ message: "Authentication required" });
+			return;
+		}
+
+		const query = typeof req.query.q === "string" ? req.query.q : "";
+		const page = Math.max(Number(req.query.page) || 1, 1);
+		const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 25);
+		const { users, total } = await usersService.searchUsers(
+			currentUserId,
+			query,
+			page,
+			limit,
+		);
+
+		res.status(200).json({
+			data: users,
+			meta: {
+				page,
+				limit,
+				total,
+				totalPages: Math.ceil(total / limit),
+			},
+		});
+	} catch (error) {
+		if (error instanceof Error && error.message === "User not found") {
+			res.status(404).json({ message: error.message });
+			return;
+		}
+
+		res.status(500).json({ message: "Failed to search users" });
+	}
+};
+
 export const getUsers = async (req: Request, res: Response, _next: NextFunction) => {
 	try {
 		const page = Math.max(Number(req.query.page) || 1, 1);
@@ -143,5 +185,83 @@ export const deleteUser = async (req: Request, res: Response, _next: NextFunctio
 		res.status(200).json({ message: "User deleted" });
 	} catch {
 		res.status(400).json({ message: "Failed to delete user" });
+	}
+};
+
+export const addFriend = async (
+	req: Request,
+	res: Response,
+	_next: NextFunction,
+) => {
+	try {
+		const currentUserId = req.user?.id;
+
+		if (!currentUserId) {
+			res.status(401).json({ message: "Authentication required" });
+			return;
+		}
+
+		const result = await usersService.addFriend(currentUserId, req.params.id);
+		res.status(200).json({
+			message: "Friend added",
+			isFriend: result.isFriend,
+			friendsCount: result.friendsCount,
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			if (
+				error.message === "Invalid user id" ||
+				error.message === "Cannot add yourself as a friend"
+			) {
+				res.status(400).json({ message: error.message });
+				return;
+			}
+
+			if (error.message === "User not found") {
+				res.status(404).json({ message: error.message });
+				return;
+			}
+		}
+
+		res.status(500).json({ message: "Failed to add friend" });
+	}
+};
+
+export const removeFriend = async (
+	req: Request,
+	res: Response,
+	_next: NextFunction,
+) => {
+	try {
+		const currentUserId = req.user?.id;
+
+		if (!currentUserId) {
+			res.status(401).json({ message: "Authentication required" });
+			return;
+		}
+
+		const result = await usersService.removeFriend(currentUserId, req.params.id);
+		res.status(200).json({
+			message: "Friend removed",
+			isFriend: result.isFriend,
+			friendsCount: result.friendsCount,
+		});
+	} catch (error) {
+		if (error instanceof Error) {
+			if (
+				error.message === "Invalid user id" ||
+				error.message === "Cannot remove yourself as a friend"
+			) {
+				res.status(400).json({ message: error.message });
+				return;
+			}
+
+			if (error.message === "User not found") {
+				res.status(404).json({ message: error.message });
+				return;
+			}
+		}
+
+		res.status(500).json({ message: "Failed to remove friend" });
 	}
 };

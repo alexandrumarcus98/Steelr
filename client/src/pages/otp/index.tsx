@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import OtpInput from "react-otp-input";
+import { OTPInput } from "input-otp";
 
 import { useToast } from "@/hooks/useToast";
 import { useAuth } from "@/providers/auth";
 import { useAppSelector } from "@/store/hooks";
 
-import "./otp.scss";
+import Slot, { FakeDash } from "./slot";
 
 const OTP: React.FC = () => {
 	const navigate = useNavigate();
@@ -22,7 +22,12 @@ const OTP: React.FC = () => {
 	const emailFromState =
 		(location.state as { email?: string } | null)?.email || tempEmail;
 
-	// Calculate time left based on expiresAt from location state
+	useEffect(() => {
+		if (!emailFromState) {
+			navigate("/login");
+		}
+	}, [emailFromState, navigate]);
+
 	useEffect(() => {
 		const expiresAtString = (location.state as { expiresAt?: string } | null)
 			?.expiresAt;
@@ -34,45 +39,30 @@ const OTP: React.FC = () => {
 
 		const expiresAt = new Date(expiresAtString).getTime();
 
-		// Calculate initial time left
 		const updateTimeLeft = () => {
 			const now = new Date().getTime();
 			const remaining = Math.max(0, Math.floor((expiresAt - now) / 1000));
 			setTimeLeft(remaining);
 		};
 
-		// Update immediately
 		updateTimeLeft();
-
-		// Then update every second
 		const timer = setInterval(updateTimeLeft, 1000);
 
 		return () => clearInterval(timer);
 	}, [location.state]);
 
-	useEffect(() => {
-		// If no email in state, redirect to login
-		if (!emailFromState) {
-			navigate("/login");
-		}
-	}, [emailFromState, navigate]);
-
-	// Don't render anything if no email (will redirect)
 	if (!emailFromState) {
 		return null;
 	}
 
-	const onSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-
-		if (otp.length !== 6) {
-			error("Invalid OTP", "Please enter a 6-digit OTP");
+	const handleComplete = async (value: string) => {
+		if (isSubmitting || value.length !== 6) {
 			return;
 		}
 
 		try {
 			setIsSubmitting(true);
-			await verifyOTP(emailFromState, otp);
+			await verifyOTP(emailFromState, value);
 			success("OTP verified successfully");
 			navigate("/dashboard", { replace: true });
 		} catch (err: unknown) {
@@ -81,6 +71,7 @@ const OTP: React.FC = () => {
 					? err.message
 					: "Failed to verify OTP. Please try again.";
 			error("Invalid OTP", errorMessage);
+			setOtp("");
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -91,12 +82,12 @@ const OTP: React.FC = () => {
 			setIsResending(true);
 			const result = await generateOTP(emailFromState);
 			success("New OTP sent successfully");
-			setOtp(""); // Clear OTP input
-			// Update timeLeft with new expiration time
+			setOtp("");
+
 			if (result?.expiresAt) {
 				const expiresAt = new Date(result.expiresAt).getTime();
 				const now = new Date().getTime();
-				setTimeLeft(Math.floor((expiresAt - now) / 1000));
+				setTimeLeft(Math.max(0, Math.floor((expiresAt - now) / 1000)));
 			}
 		} catch (err: unknown) {
 			const errorMessage =
@@ -108,72 +99,65 @@ const OTP: React.FC = () => {
 	};
 
 	return (
-		<div className="w-full rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 sm:p-10">
-			<div className="mx-auto mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-xs font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
-				OTP
-			</div>
-			<h1 className="text-center text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl">
-				Enter OTP
-			</h1>
-			<p className="mt-2 text-center text-sm text-gray-600">
-				We've sent a 6-digit code to {emailFromState}
-			</p>
+		<div className="min-h-screen min-w-full bg-slate-50 px-4 py-8 text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100 sm:px-8 lg:px-16">
+			<div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full flex-col items-center justify-center">
+				<div className="mb-8 flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-xs font-semibold text-slate-900 shadow-sm dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100">
+					OTP
+				</div>
 
-			<form onSubmit={onSubmit} className="mt-7 space-y-6" noValidate>
-				<div>
-					<label className="mb-4 block text-sm font-medium text-gray-700">
-						6-digit OTP
-					</label>
-					<div className="flex justify-center">
-						<div className="otp-container">
-							<OtpInput
-								value={otp}
-								onChange={setOtp}
-								numInputs={6}
-								containerStyle="otp-container"
-								renderSeparator={<span>-</span>}
-								renderInput={(props) => (
-									<input {...props} className="otp-input" />
-								)}
-							/>
-						</div>
+				<h1 className="w-full text-center text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 sm:text-6xl">
+					Enter the 6-digit code.
+				</h1>
+
+				<p className="mt-6 w-full text-center text-base leading-7 text-slate-500 dark:text-slate-400 sm:text-xl">
+					We've sent a code to {emailFromState}
+				</p>
+
+				<div className="mt-10 w-full">
+					<OTPInput
+						value={otp}
+						onChange={setOtp}
+						maxLength={6}
+						onComplete={(value) => {
+							void handleComplete(value);
+						}}
+						pushPasswordManagerStrategy="none"
+						containerClassName="group flex items-center justify-center gap-2 sm:gap-4"
+						render={({ slots }) => (
+							<>
+								<div className="flex">
+									{slots.slice(0, 3).map((slot, idx) => (
+										<Slot key={idx} {...slot} isActive={idx === 0} />
+									))}
+								</div>
+
+								<FakeDash />
+
+								<div className="flex">
+									{slots.slice(3).map((slot, idx) => (
+										<Slot key={idx} {...slot} />
+									))}
+								</div>
+							</>
+						)}
+					/>
+
+					<div className="mt-6 text-center">
+						<button
+							type="button"
+							onClick={handleResendOTP}
+							disabled={timeLeft > 0 || isResending}
+							className="text-sm font-medium text-slate-700 transition-colors duration-300 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-300 dark:hover:text-slate-100"
+						>
+							{isResending
+								? "Sending..."
+								: timeLeft > 0
+									? `Resend in ${timeLeft}s`
+									: "Resend OTP"}
+						</button>
 					</div>
 				</div>
-
-				<button
-					type="submit"
-					disabled={isSubmitting || otp.length !== 6}
-					className="inline-flex w-full items-center justify-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-black disabled:cursor-not-allowed disabled:opacity-70"
-				>
-					{isSubmitting ? "Verifying OTP..." : "Verify OTP"}
-				</button>
-
-				<div className="text-center">
-					<button
-						type="button"
-						onClick={handleResendOTP}
-						disabled={timeLeft > 0 || isResending}
-						className="text-xs font-medium text-gray-600 transition-all duration-300 hover:text-gray-900 disabled:opacity-50"
-					>
-						{isResending
-							? "Sending..."
-							: timeLeft > 0
-								? `Resend in ${timeLeft}s`
-								: "Resend OTP"}
-					</button>
-				</div>
-			</form>
-
-			<p className="mt-6 text-center text-sm text-gray-600">
-				Wrong email?{" "}
-				<button
-					type="button"
-					onClick={() => navigate("/login")}
-					className="font-medium text-gray-900 transition-all duration-300 hover:opacity-70"
-				>
-					Back to login
-				</button>
-			</p>
+			</div>
 		</div>
 	);
 };

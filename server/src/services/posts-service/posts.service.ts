@@ -1,17 +1,35 @@
 // Posts Service
-import { LikeModel, PostModel, ViewModel } from "@/models";
+import { LikeModel, PostModel, UserModel, ViewModel } from "@/models";
 import mongoose from "mongoose";
+
+const getAuthorId = (author: unknown) => {
+	if (typeof author === "string") {
+		return author;
+	}
+
+	if (typeof author === "object" && author !== null) {
+		const candidate = author as Record<string, unknown>;
+		return String(candidate._id ?? candidate.id ?? "");
+	}
+
+	return "";
+};
 
 export const findPosts = async (page: number, limit: number, userId?: string) => {
 	const skip = (page - 1) * limit;
-	const posts = await PostModel.find({ visibility: "public" })
+	const accessibleAuthorIds = userId ? await getAccessibleAuthorIds(userId) : [];
+	const postFilter = userId
+		? { author: { $in: accessibleAuthorIds } }
+		: { visibility: "public" };
+
+	const posts = await PostModel.find(postFilter)
 		.populate("author", "username email _id")
 		.sort({ createdAt: -1 })
 		.skip(skip)
 		.limit(limit)
 		.lean();
 
-	const total = await PostModel.countDocuments({ visibility: "public" });
+	const total = await PostModel.countDocuments(postFilter);
 	const totalPages = Math.ceil(total / limit);
 
 	if (!userId) {
@@ -35,8 +53,13 @@ export const findPosts = async (page: number, limit: number, userId?: string) =>
 	return { posts: posts.map((p) => ({ ...p, id: p._id.toString(), isLiked: likedPostIds.has(p._id.toString()) })), totalPages, total };
 };
 
-export const findMostViewedPosts = async (limit: number) => {
-	return PostModel.find({ visibility: "public" })
+export const findMostViewedPosts = async (limit: number, userId?: string) => {
+	const accessibleAuthorIds = userId ? await getAccessibleAuthorIds(userId) : [];
+	const filter = userId
+		? { author: { $in: accessibleAuthorIds } }
+		: { visibility: "public" };
+
+	return PostModel.find(filter)
 		.populate("author", "username email _id")
 		.sort({ viewsCount: -1, createdAt: -1 })
 		.limit(limit)
@@ -44,12 +67,17 @@ export const findMostViewedPosts = async (limit: number) => {
 };
 
 export const findLastVisitedPosts = async (userId: string, limit: number) => {
+	const accessibleAuthorIds = await getAccessibleAuthorIds(userId);
 	const views = await ViewModel.find({ user: userId })
-		.populate({ path: "post", populate: { path: "author", select: "username email _id" } })
+		.populate({
+			path: "post",
+			match: { author: { $in: accessibleAuthorIds } },
+			populate: { path: "author", select: "username email _id" },
+		})
 		.sort({ updatedAt: -1 })
 		.limit(limit)
 		.lean();
-	return views.map((view: any) => view.post);
+	return views.map((view: { post?: unknown }) => view.post).filter(Boolean);
 };
 
 export const createNewPost = async (authorId: string, content: string, mediaUrls: string[], visibility: string) => {
@@ -61,8 +89,12 @@ export const createNewPost = async (authorId: string, content: string, mediaUrls
 
 export const trackPostView = async (userId: string, postId: string) => {
 	if (!mongoose.Types.ObjectId.isValid(postId)) throw new Error("Invalid post ID");
-	const post = await PostModel.findById(postId);
+	const post = await PostModel.findById(postId).select("author").lean().exec();
 	if (!post) throw new Error("Post not found");
+	const accessibleAuthorIds = await getAccessibleAuthorIds(userId);
+	if (!accessibleAuthorIds.includes(getAuthorId(post.author))) {
+		throw new Error("Post not found");
+	}
 	await ViewModel.findOneAndUpdate(
 		{ user: userId, post: postId },
 		{ $set: { user: userId, post: postId } },
@@ -86,9 +118,9 @@ export const findPostById = async (id: string, userId?: string) => {
 	}
 
 	if (!post) throw new Error("Post not found");
+	const accessibleAuthorIds = await getAccessibleAuthorIds(userId);
 
-	// Enforce visibility for authenticated users
-	if (post.visibility === "private" && post.author?.toString() !== userId) {
+	if (!accessibleAuthorIds.includes(getAuthorId(post.author))) {
 		throw new Error("Post not found");
 	}
 
@@ -98,8 +130,12 @@ export const findPostById = async (id: string, userId?: string) => {
 
 export const likePost = async (postId: string, userId: string) => {
 	if (!mongoose.Types.ObjectId.isValid(postId)) throw new Error("Invalid post ID");
-	const postExists = await PostModel.exists({ _id: postId });
-	if (!postExists) throw new Error("Post not found");
+	const post = await PostModel.findById(postId).select("author").lean().exec();
+	if (!post) throw new Error("Post not found");
+	const accessibleAuthorIds = await getAccessibleAuthorIds(userId);
+	if (!accessibleAuthorIds.includes(getAuthorId(post.author))) {
+		throw new Error("Post not found");
+	}
 
 	const result = await LikeModel.updateOne(
 		{ user: userId, targetType: "post", targetId: postId },
@@ -115,8 +151,12 @@ export const likePost = async (postId: string, userId: string) => {
 
 export const unlikePost = async (postId: string, userId: string) => {
 	if (!mongoose.Types.ObjectId.isValid(postId)) throw new Error("Invalid post ID");
-	const postExists = await PostModel.exists({ _id: postId });
-	if (!postExists) throw new Error("Post not found");
+	const post = await PostModel.findById(postId).select("author").lean().exec();
+	if (!post) throw new Error("Post not found");
+	const accessibleAuthorIds = await getAccessibleAuthorIds(userId);
+	if (!accessibleAuthorIds.includes(getAuthorId(post.author))) {
+		throw new Error("Post not found");
+	}
 
 	const result = await LikeModel.deleteOne({
 		user: userId,
@@ -155,4 +195,21 @@ export const getDashboardStats = async (userId: string) => {
 		totalLikes,
 		recentPosts,
 	};
+};
+
+const getAccessibleAuthorIds = async (userId: string) => {
+	const currentUser = await UserModel.findById(userId)
+		.select("friendIds")
+		.lean()
+		.exec();
+
+	if (!currentUser) {
+		throw new Error("User not found");
+	}
+
+	const friendIds = (currentUser.friendIds ?? []).map((friendId) =>
+		friendId.toString(),
+	);
+
+	return [userId, ...friendIds];
 };

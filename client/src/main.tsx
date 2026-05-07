@@ -10,6 +10,7 @@ import { store } from "@/store";
 import DefaultLayout from "@/providers/layouts/default";
 import FullLayout from "@/providers/layouts/full";
 import ToastProvider from "@/providers/toast";
+import ThemeProvider from "@/providers/theme";
 
 import App from "@/App";
 import Login from "@/pages/login";
@@ -32,48 +33,50 @@ import "@/assets/sass/index.scss";
 ReactDOM.createRoot(document.getElementById("root")!).render(
 	<React.StrictMode>
 		<Provider store={store}>
-			<ToastProvider>
-				<AuthProvider>
-					<BrowserRouter>
-						<Routes>
-							{/* Auth pages layout */}
-							<Route element={<FullLayout />}>
-								<Route element={<RequireGuest />}>
-									<Route path="/login" element={<Login />} />
-									<Route path="/otp" element={<OTP />} />
-									<Route path="/register" element={<Register />} />
-									<Route
-										path="/recover-password"
-										element={<RecoverPassword />}
-									/>
-									<Route path="/reset-password" element={<ResetPassword />} />
+			<ThemeProvider>
+				<ToastProvider>
+					<AuthProvider>
+						<BrowserRouter>
+							<Routes>
+								{/* Auth pages layout */}
+								<Route element={<FullLayout />}>
+									<Route element={<RequireGuest />}>
+										<Route path="/login" element={<Login />} />
+										<Route path="/otp" element={<OTP />} />
+										<Route path="/register" element={<Register />} />
+										<Route
+											path="/recover-password"
+											element={<RecoverPassword />}
+										/>
+										<Route path="/reset-password" element={<ResetPassword />} />
+									</Route>
 								</Route>
-							</Route>
 
-							{/* Use DefaultLayout for all app pages */}
-							<Route path="/*" element={<DefaultLayout />}>
-								<Route path="" element={<App />} />
-								<Route element={<RequireAuth />}>
-									<Route path="dashboard" element={<Dashboard />} />
-									<Route path="feed" element={<Feed />} />
-									<Route
-										path="posts/most-viewed"
-										element={<MostViewedPosts />}
-									/>
-									<Route
-										path="posts/last-visited"
-										element={<LastVisitedPosts />}
-									/>
-									<Route path="profile" element={<Profile />} />
-									<Route path="users" element={<Users />} />
-									<Route path="posts/:id" element={<PostPage />} />
+								{/* Use DefaultLayout for all app pages */}
+								<Route path="/*" element={<DefaultLayout />}>
+									<Route path="" element={<App />} />
+									<Route element={<RequireAuth />}>
+										<Route path="dashboard" element={<Dashboard />} />
+										<Route path="feed" element={<Feed />} />
+										<Route
+											path="posts/most-viewed"
+											element={<MostViewedPosts />}
+										/>
+										<Route
+											path="posts/last-visited"
+											element={<LastVisitedPosts />}
+										/>
+										<Route path="profile" element={<Profile />} />
+										<Route path="users" element={<Users />} />
+										<Route path="posts/:id" element={<PostPage />} />
+									</Route>
+									<Route path="*" element={<App />} />
 								</Route>
-								<Route path="*" element={<App />} />
-							</Route>
-						</Routes>
-					</BrowserRouter>
-				</AuthProvider>
-			</ToastProvider>
+							</Routes>
+						</BrowserRouter>
+					</AuthProvider>
+				</ToastProvider>
+			</ThemeProvider>
 		</Provider>
 	</React.StrictMode>
 );

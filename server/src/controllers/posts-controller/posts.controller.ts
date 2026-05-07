@@ -14,7 +14,7 @@ export const getPosts = async (req: Request, res: Response, next: NextFunction) 
 export const getMostViewed = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const limit = Math.min(50, parseInt(req.query.limit as string) || 10);
-		const posts = await postsService.findMostViewedPosts(limit);
+		const posts = await postsService.findMostViewedPosts(limit, req.user?.id);
 		res.json({ data: posts });
 	} catch (error) { next(error); }
 };

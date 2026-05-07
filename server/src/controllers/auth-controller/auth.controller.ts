@@ -21,7 +21,14 @@ export const register = async (
 	_next: NextFunction,
 ) => {
 	try {
-		const result = await authService.registerUser(req.body as RegisterBody);
+		const forwardedFor = req.headers["x-forwarded-for"];
+		const forwardedIp =
+			typeof forwardedFor === "string" ? forwardedFor.split(",")[0]?.trim() : undefined;
+		const signupIp = forwardedIp || req.ip || undefined;
+
+		const result = await authService.registerUser(req.body as RegisterBody, {
+			signupIp,
+		});
 		res.status(201).json(result);
 	} catch (error) {
 		if (error instanceof Error) {
@@ -152,6 +159,31 @@ export const resetPassword = async (
 	}
 };
 
+export const verifyResetPasswordToken = async (
+	req: Request,
+	res: Response,
+	_next: NextFunction,
+) => {
+	try {
+		const token = typeof req.query.token === "string" ? req.query.token : "";
+
+		await authService.verifyResetPasswordToken(token);
+
+		res.status(200).json({ valid: true });
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			(error.message === "token is required" ||
+				error.message === "Invalid or expired recovery token")
+		) {
+			res.status(400).json({ message: error.message });
+			return;
+		}
+
+		res.status(500).json({ message: "Failed to verify reset token" });
+	}
+};
+
 export const me = async (req: Request, res: Response, _next: NextFunction) => {
 	try {
 		const user = await authService.getCurrentUser(req.user?.id);
@@ -232,7 +264,9 @@ export const verifyOTPStatus = async (
 		}
 
 		// Generate tokens after successful OTP verification
-		const user = await UserModel.findOne({ email: email.toLowerCase().trim() });
+		const user = await UserModel.findOne({ email: email.toLowerCase().trim() })
+			.select("username email roles isVerified isActive profileLocation friendIds signupIp createdAt updatedAt")
+			.exec();
 		if (!user) {
 			res.status(404).json({ message: "User not found" });
 			return;

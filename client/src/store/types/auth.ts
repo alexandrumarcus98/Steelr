@@ -1,3 +1,11 @@
+export interface UserLocation {
+	city?: string;
+	country?: string;
+	region?: string;
+	continent?: string;
+	source?: "manual" | "signup-ip" | "seed";
+}
+
 export interface User {
 	id: string;
 	username: string;
@@ -5,6 +13,8 @@ export interface User {
 	roles: string[];
 	isActive: boolean;
 	isVerified: boolean;
+	location?: UserLocation;
+	friendsCount: number;
 }
 
 export interface AuthTokens {

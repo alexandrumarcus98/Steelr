@@ -37,54 +37,54 @@ const Users: React.FC = () => {
 		}
 	}, [user]);
 
-	if (loading) return <div>Loading users...</div>;
-	if (error) return <div className="text-red-500">{error}</div>;
+  if (loading) return <div className="text-sm text-slate-600 dark:text-slate-400">Loading users...</div>;
+  if (error) return <div className="text-sm text-red-600 dark:text-red-400">{error}</div>;
 
 	return (
-		<div className="max-w-6xl mx-auto">
-			<h1 className="text-3xl font-bold mb-8">User Management</h1>
+		<div className="mx-auto max-w-6xl">
+			<h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-slate-50">User Management</h1>
 
-			<div className="bg-white shadow-md rounded-lg overflow-hidden">
+			<div className="overflow-hidden rounded-lg bg-white shadow-md dark:bg-slate-900">
 				<table className="w-full">
-					<thead className="bg-gray-50">
+					<thead className="bg-slate-50 dark:bg-slate-800">
 						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
 								Username
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
 								Email
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
 								Roles
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
 								Status
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
 								Actions
 							</th>
 						</tr>
 					</thead>
-					<tbody className="bg-white divide-y divide-gray-200">
+					<tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
 						{users.map((u) => (
 							<tr key={u.id}>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">
 									{u.username}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
 									{u.email}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
 									{u.roles?.join(", ") || "user"}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
 									{u.isActive ? "Active" : "Inactive"} / {u.isVerified ? "Verified" : "Unverified"}
 								</td>
-								<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-									<button className="text-blue-600 hover:text-blue-900 mr-4">
+								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+									<button className="mr-4 text-sky-600 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300">
 										Edit
 									</button>
-									<button className="text-red-600 hover:text-red-900">
+									<button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
 										Delete
 									</button>
 								</td>

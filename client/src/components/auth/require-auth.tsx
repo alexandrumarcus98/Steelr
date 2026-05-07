@@ -8,7 +8,7 @@ const RequireAuth: React.FC = () => {
 
 	if (loading) {
 		return (
-			<div className="flex min-h-[50vh] items-center justify-center text-sm text-gray-500">
+			<div className="flex min-h-[50vh] items-center justify-center text-sm text-slate-500 dark:text-slate-400">
 				Checking session...
 			</div>
 		);

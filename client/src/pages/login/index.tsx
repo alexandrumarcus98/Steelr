@@ -12,8 +12,7 @@ const Login: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [isLoading, setIsLoading] = useState(false);
-	const fromPath = (location.state as { from?: { pathname?: string } } | null)
-		?.from?.pathname;
+	const fromPath = (location.state as { from?: string } | null)?.from;
 	const {
 		register,
 		handleSubmit,
@@ -57,100 +56,105 @@ const Login: React.FC = () => {
 		<>
 			{/* Loading overlay during transition */}
 			{isLoading && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm dark:bg-slate-950/70">
 					<div className="flex flex-col items-center gap-3">
-						<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900"></div>
-						<p className="text-sm font-medium text-gray-700">Sending code...</p>
+						<div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-900 dark:border-slate-800 dark:border-t-slate-100" />
+						<p className="text-sm font-medium text-slate-700 dark:text-slate-300">Sending code...</p>
 					</div>
 				</div>
 			)}
 
-			<div className="w-full rounded-2xl border border-gray-200 bg-white p-8 shadow-sm transition-all duration-300 sm:p-10">
-				<div className="mx-auto mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-xs font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5">
-					SL
-				</div>
-				<h1
-					id="login-title"
-					className="text-center text-2xl font-semibold tracking-tight text-gray-900 sm:text-3xl"
-				>
-					Sign in to your account
-				</h1>
+			<div className="min-h-screen min-w-full bg-slate-50 px-4 py-8 text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100 sm:px-8 lg:px-16">
+				<div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl flex-col items-center justify-center">
+					<h1
+						id="login-title"
+						className="w-full text-center text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 sm:text-6xl"
+					>
+						Sign in to your account
+					</h1>
 
-				<form
-					onSubmit={handleSubmit(onSubmit)}
-					className="mt-7 space-y-4"
-					noValidate
-				>
-					<div>
-						<label
-							htmlFor="email"
-							className="mb-1.5 block text-sm font-medium text-gray-700"
-						>
-							Email address
-						</label>
-						<input
-							type="email"
-							id="email"
-							placeholder="name@company.com"
-							className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-gray-900"
-							{...register("email")}
-							disabled={isButtonDisabled}
-						/>
-						{errors.email && (
-							<p className="mt-1.5 text-xs text-red-600">
-								{errors.email.message}
-							</p>
-						)}
-					</div>
+					<p className="mt-6 w-full text-center text-base leading-7 text-slate-500 dark:text-slate-400 sm:text-xl">
+						Welcome back. Enter your credentials to continue.
+					</p>
 
-					<div>
-						<div className="mb-1.5 flex items-center justify-between gap-2">
+					<form
+						onSubmit={handleSubmit(onSubmit)}
+						className="mt-10 w-full max-w-xl space-y-4"
+						noValidate
+					>
+						<div>
 							<label
-								htmlFor="password"
-								className="block text-sm font-medium text-gray-700"
+								htmlFor="email"
+								className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
 							>
-								Password
+								Email address
 							</label>
-							<Link
-								to="/recover-password"
-								className="text-xs font-medium text-gray-600 transition-all duration-300 hover:text-gray-900"
-							>
-								Forgot password?
-							</Link>
+							<input
+								type="email"
+								id="email"
+								placeholder="name@company.com"
+								className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100 dark:focus:ring-slate-100/10"
+								{...register("email")}
+								disabled={isButtonDisabled}
+							/>
+							{errors.email && (
+								<p className="mt-1.5 text-xs text-red-600 dark:text-red-400">
+									{errors.email.message}
+								</p>
+							)}
 						</div>
-						<input
-							type="password"
-							id="password"
-							placeholder="Enter your password"
-							className="w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-all duration-300 placeholder:text-gray-400 focus:border-gray-900"
-							{...register("password")}
+
+						<div>
+							<div className="mb-1.5 flex items-center justify-between gap-2">
+								<label
+									htmlFor="password"
+									className="block text-sm font-medium text-slate-700 dark:text-slate-300"
+								>
+									Password
+								</label>
+								<Link
+									to="/recover-password"
+									state={{ from: "/login" }}
+									className="text-xs font-medium text-slate-500 transition-all duration-300 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100"
+								>
+									Forgot password?
+								</Link>
+							</div>
+							<input
+								type="password"
+								id="password"
+								placeholder="Enter your password"
+								className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100 dark:focus:ring-slate-100/10"
+								{...register("password")}
+								disabled={isButtonDisabled}
+							/>
+							{errors.password && (
+								<p className="mt-1.5 text-xs text-red-600 dark:text-red-400">
+									{errors.password.message}
+								</p>
+							)}
+						</div>
+
+						<button
+							type="submit"
 							disabled={isButtonDisabled}
-						/>
-						{errors.password && (
-							<p className="mt-1.5 text-xs text-red-600">
-								{errors.password.message}
-							</p>
-						)}
-					</div>
+							className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+						>
+							{isLoading ? "Sending code..." : "Sign in"}
+						</button>
+					</form>
 
-					<button
-						type="submit"
-						disabled={isButtonDisabled}
-						className="inline-flex w-full items-center justify-center rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-black disabled:cursor-not-allowed disabled:opacity-70"
-					>
-						{isLoading ? "Sending code..." : "Sign in"}
-					</button>
-				</form>
-
-				<p className="mt-6 text-center text-sm text-gray-600">
-					Not a member?{" "}
-					<Link
-						to="/register"
-						className="font-medium text-gray-900 transition-all duration-300 hover:opacity-70"
-					>
-						Create account
-					</Link>
-				</p>
+					<p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+						Not a member?{" "}
+						<Link
+							to="/register"
+							state={{ from: "/login" }}
+							className="font-medium text-slate-900 transition-all duration-300 hover:opacity-70 dark:text-slate-100"
+						>
+							Create account
+						</Link>
+					</p>
+				</div>
 			</div>
 		</>
 	);

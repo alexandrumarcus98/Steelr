@@ -10,13 +10,13 @@ type PostCardProps = {
 
 export const PostCard: React.FC<PostCardProps> = ({ post, onToggleLike }) => {
 	return (
-		<article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5">
+		<article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 dark:border-slate-800 dark:bg-slate-900">
 			<div className="mb-2 flex items-center justify-between gap-2">
-				<p className="text-sm font-medium text-gray-700">
+				<p className="text-sm font-medium text-slate-700 dark:text-slate-300">
 					{post.author?.username || "Unknown author"}
 				</p>
 				{post.createdAt && (
-					<p className="text-xs text-gray-500">
+					<p className="text-xs text-slate-500 dark:text-slate-400">
 						{new Date(post.createdAt).toLocaleString()}
 					</p>
 				)}
@@ -25,21 +25,21 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onToggleLike }) => {
 			{/* Title / content clickable – go to single post */}
 			<Link to={`/posts/${post.id}`} className="block">
 				{post.title && (
-					<h2 className="text-lg font-semibold tracking-tight text-gray-900">
+					<h2 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-slate-50">
 						{post.title}
 					</h2>
 				)}
-				<p className="mt-2 text-sm leading-6 text-gray-700">{post.content}</p>
+				<p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-300">{post.content}</p>
 			</Link>
 
-			<div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-gray-500">
+			<div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
 				<span>{post.viewsCount ?? 0} views</span>
 				<span>{post.likesCount ?? 0} likes</span>
 				<span>{post.commentsCount ?? 0} comments</span>
 				<button
 					type="button"
 					onClick={() => onToggleLike(post.id, !!post.isLiked)}
-					className="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-gray-700 transition-all duration-300 hover:bg-gray-100"
+					className="rounded-md border border-slate-300 px-2.5 py-1 text-xs font-medium text-slate-700 transition-all duration-300 hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
 				>
 					{post.isLiked ? "Liked" : "Like"}
 				</button>

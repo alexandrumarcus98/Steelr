@@ -8,8 +8,8 @@ export const RequireGuest = () => {
 		return (
 			<div className="flex min-h-screen items-center justify-center">
 				<div className="flex flex-col items-center gap-3">
-					<div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-200 border-t-gray-900"></div>
-					<p className="text-sm font-medium text-gray-600">Loading...</p>
+					<div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-900 dark:border-slate-800 dark:border-t-slate-100"></div>
+					<p className="text-sm font-medium text-slate-600 dark:text-slate-400">Loading...</p>
 				</div>
 			</div>
 		);

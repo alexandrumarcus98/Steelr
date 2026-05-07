@@ -5,6 +5,9 @@ import * as usersController from "@/controllers/users-controller/users.controlle
 const usersRouter = Router();
 
 usersRouter.get("/me", authenticate, usersController.me);
+usersRouter.get("/search", authenticate, usersController.searchUsers);
+usersRouter.post("/:id/friends", authenticate, usersController.addFriend);
+usersRouter.delete("/:id/friends", authenticate, usersController.removeFriend);
 
 usersRouter.get(
 	"/",
