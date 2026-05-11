@@ -1,4 +1,3 @@
 const DEFAULT_USERS_ENDPOINT = "/users";
 
-export const USERS_ENDPOINT =
-	import.meta.env.VITE_USERS_ENDPOINT || DEFAULT_USERS_ENDPOINT;
+export const USERS_ENDPOINT = import.meta.env.VITE_USERS_ENDPOINT || DEFAULT_USERS_ENDPOINT;

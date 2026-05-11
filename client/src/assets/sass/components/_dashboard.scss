@@ -27,7 +27,9 @@
 	background: var(--panel);
 	border-right: 1px solid var(--border);
 	backdrop-filter: blur(4px);
-	transition: width 180ms ease, padding 180ms ease;
+	transition:
+		width 180ms ease,
+		padding 180ms ease;
 	overflow: hidden;
 }
 
@@ -51,7 +53,9 @@
 	border-radius: 12px;
 	display: grid;
 	place-items: center;
-	font: 800 0.78rem/1 "Sora", sans-serif;
+	font:
+		800 0.78rem/1 "Sora",
+		sans-serif;
 	letter-spacing: 0.04em;
 	color: #fff;
 	background: linear-gradient(130deg, var(--accent-1), var(--accent-2));
@@ -86,11 +90,16 @@
 	border-radius: 12px;
 	padding: 12px;
 	text-align: left;
-	font: 700 0.92rem/1 "Manrope", sans-serif;
+	font:
+		700 0.92rem/1 "Manrope",
+		sans-serif;
 	color: var(--ink-2);
 	background: transparent;
 	cursor: pointer;
-	transition: background-color 130ms ease, color 130ms ease, border-color 130ms ease;
+	transition:
+		background-color 130ms ease,
+		color 130ms ease,
+		border-color 130ms ease;
 }
 
 .dashboard-sidebar button:hover {
@@ -161,7 +170,9 @@
 
 .topbar-left h1 {
 	color: var(--ink-1);
-	font: 700 1.2rem/1.2 "Sora", sans-serif;
+	font:
+		700 1.2rem/1.2 "Sora",
+		sans-serif;
 }
 
 .topbar-right {
@@ -204,7 +215,9 @@
 	border-radius: 11px;
 	display: grid;
 	place-items: center;
-	font: 700 0.76rem/1 "Sora", sans-serif;
+	font:
+		700 0.76rem/1 "Sora",
+		sans-serif;
 	color: #fff;
 	background: linear-gradient(130deg, var(--accent-1), var(--accent-2));
 }
@@ -249,7 +262,9 @@
 
 .stat-card h2 {
 	margin: 6px 0;
-	font: 800 1.3rem/1.1 "Sora", sans-serif;
+	font:
+		800 1.3rem/1.1 "Sora",
+		sans-serif;
 	color: var(--ink-1);
 }
 
@@ -282,7 +297,9 @@
 
 .panel-head h3 {
 	color: var(--ink-1);
-	font: 700 1rem/1 "Sora", sans-serif;
+	font:
+		700 1rem/1 "Sora",
+		sans-serif;
 }
 
 .panel-head button {

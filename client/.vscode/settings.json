@@ -1,7 +1,6 @@
 {
 	"editor.defaultFormatter": "esbenp.prettier-vscode",
 	"editor.formatOnSave": true,
-
 	// Make VS Code use project config, not some global one
 	"prettier.requireConfig": true,
 	"prettier.useEditorConfig": true,
@@ -15,5 +14,28 @@
 	},
 	"yaml.schemas": {
 		"https://www.schemastore.org/projektor.json": ".continue/config.yaml"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "vscode.json-language-features"
+	},
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "always"
+	},
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	"eslint.options": {
+		"extensions": [".js", ".jsx", ".ts", ".tsx"]
+	},
+	"eslint.run": "onSave",
+	"[javascript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	}
 }

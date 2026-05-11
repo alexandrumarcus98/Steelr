@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
-import * as commentsService from "@/services/comments-service/comments.service";
+import { commentsService } from "@/services/comments-service/comments.service";
 
-export const getCommentsForPost = async (req: Request, res: Response, next: NextFunction) => {
+const getCommentsForPost = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { postId } = req.params;
 		const comments = await commentsService.getCommentsForPost(postId);
@@ -11,7 +11,7 @@ export const getCommentsForPost = async (req: Request, res: Response, next: Next
 	}
 };
 
-export const createComment = async (req: Request, res: Response, next: NextFunction) => {
+const createComment = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const userId = req.user?.id;
 		const { postId } = req.params;
@@ -34,7 +34,7 @@ export const createComment = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const updateComment = async (req: Request, res: Response, next: NextFunction) => {
+const updateComment = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const userId = req.user?.id;
 		const { commentId } = req.params;
@@ -56,7 +56,7 @@ export const updateComment = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-export const deleteComment = async (req: Request, res: Response, next: NextFunction) => {
+const deleteComment = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const userId = req.user?.id;
 		const { commentId } = req.params;
@@ -75,4 +75,11 @@ export const deleteComment = async (req: Request, res: Response, next: NextFunct
 		}
 		next(error);
 	}
+};
+
+export const commentsController = {
+	getCommentsForPost,
+	createComment,
+	updateComment,
+	deleteComment,
 };

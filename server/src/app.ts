@@ -3,6 +3,7 @@ import cors, { CorsOptions } from "cors";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import hpp from "hpp";
+import logger from "morgan";
 
 import "./config/env";
 
@@ -42,6 +43,7 @@ app.disable("x-powered-by");
 app.use(helmet());
 app.use(cors(corsOptions));
 app.use(hpp());
+app.use(logger("combined"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api", apiLimiter);

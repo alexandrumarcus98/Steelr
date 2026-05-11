@@ -1,0 +1,196 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "opencode/kimi-k2.5",
+  "small_model": "opencode/minimax-m2.5",
+  "provider": {
+    "nvidia-nim": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "NVIDIA NIM",
+      "options": {
+        "baseURL": "http://localhost:8000/v1",
+        "apiKey": "{env:NVIDIA_API_KEY}"
+      },
+      "models": {
+        "llama-3.3-70b-instruct": {
+          "name": "Llama 3.3 70B"
+        },
+        "nemotron-3-super-120b-a12b": {
+          "name": "Nemotron Super 120B"
+        },
+        "deepseek-r1": {
+          "name": "DeepSeek R1"
+        }
+      }
+    }
+  },
+  "agent": {
+    "build": {
+      "description": "Full-stack Steelr dev: React, Redux, TypeScript, Express, Mongoose, auth, Docker",
+      "model": "opencode/kimi-k2.5",
+      "temperature": 0.2,
+      "max_steps": 30,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "task": "allow",
+        "webfetch": "allow",
+        "lsp": "allow",
+        "todowrite": "allow"
+      }
+    },
+    "build2": {
+      "description": "Full-stack Steelr dev fallback using Kimi K2.6",
+      "model": "opencode/kimi-k2.6",
+      "temperature": 0.2,
+      "max_steps": 30,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "task": "allow",
+        "webfetch": "allow",
+        "lsp": "allow",
+        "todowrite": "allow"
+      }
+    },
+    "build-nim": {
+      "description": "Full-stack Steelr dev using local NVIDIA NIM — zero rate limits",
+      "model": "nvidia/nvidia/llama-3_2-nemoretriever-300m-embed-v1",
+      "temperature": 0.2,
+      "max_steps": 30,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "task": "allow",
+        "webfetch": "allow",
+        "lsp": "allow",
+        "todowrite": "allow"
+      }
+    },
+    "premium": {
+      "description": "Hard tasks only: complex auth, API design, multi-file architecture changes",
+      "model": "opencode/qwen3.6-plus",
+      "temperature": 0.15,
+      "max_steps": 40,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "task": "allow",
+        "lsp": "allow",
+        "todowrite": "allow"
+      }
+    },
+    "premium-nim": {
+      "description": "Hard tasks via local NIM — Nemotron 120B for complex architecture, no limits",
+      "model": "nvidia/nvidia/nemotron-3-super-120b-a12b",
+      "temperature": 0.15,
+      "max_steps": 40,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "task": "allow",
+        "lsp": "allow",
+        "todowrite": "allow"
+      }
+    },
+    "quickfix": {
+      "description": "Fast cheap fixes: imports, Tailwind classes, typos, small renames, boilerplate",
+      "model": "opencode/minimax-m2.5",
+      "temperature": 0.3,
+      "max_steps": 10,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "deny",
+        "task": "deny",
+        "lsp": "allow"
+      }
+    },
+    "review": {
+      "description": "Read-only code review: TypeScript patterns, auth security, API contracts",
+      "model": "opencode/kimi-k2.5",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "deny",
+        "task": "deny",
+        "lsp": "allow"
+      }
+    },
+    "review2": {
+      "description": "Read-only code review fallback using MiniMax M2.7",
+      "model": "opencode-go/minimax-m2.7",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "permission": {
+        "read": "allow",
+        "edit": "deny",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "deny",
+        "task": "deny",
+        "lsp": "allow"
+      }
+    },
+    "deepcontext": {
+      "description": "Whole-codebase reasoning: pass all client + server files at once. Use sparingly.",
+      "model": "opencode/qwen3-coder",
+      "mode": "subagent",
+      "temperature": 0.15,
+      "permission": {
+        "read": "allow",
+        "edit": "ask",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "ask",
+        "task": "allow",
+        "lsp": "allow"
+      }
+    },
+    "cheap": {
+      "description": "Ultra-cheap high-volume tasks: reading files, searching, summarizing, planning",
+      "model": "opencode/nemotron-3-super-free",
+      "temperature": 0.2,
+      "max_steps": 20,
+      "permission": {
+        "read": "allow",
+        "edit": "allow",
+        "glob": "allow",
+        "grep": "allow",
+        "list": "allow",
+        "bash": "deny",
+        "task": "allow",
+        "lsp": "allow"
+      }
+    }
+  }
+}

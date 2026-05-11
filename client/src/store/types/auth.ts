@@ -1,4 +1,4 @@
-export interface UserLocation {
+export interface IUserLocation {
 	city?: string;
 	country?: string;
 	region?: string;
@@ -6,31 +6,31 @@ export interface UserLocation {
 	source?: "manual" | "signup-ip" | "seed";
 }
 
-export interface User {
+export interface IUser {
 	id: string;
 	username: string;
 	email: string;
 	roles: string[];
 	isActive: boolean;
 	isVerified: boolean;
-	location?: UserLocation;
+	location?: IUserLocation;
 	friendsCount: number;
 }
 
-export interface AuthTokens {
+export interface IAuthTokens {
 	accessToken: string;
 	refreshToken: string;
 	expiresIn: number;
 }
 
-export interface VerifyOTPResponse {
+export interface IVerifyOTPResponse {
 	accessToken: string;
 	refreshToken: string;
 	expiresIn: number;
-	user: User;
+	user: IUser;
 }
 
-export interface LoginResponse {
+export interface ILoginResponse {
 	requiresOTP: boolean;
 	message: string;
 	tempEmail?: string;

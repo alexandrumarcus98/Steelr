@@ -16,10 +16,7 @@ const usernameSchema = z
 	.string()
 	.transform((value) => value.replace(/\s+/g, " ").trim())
 	.pipe(
-		z
-			.string()
-			.min(2, "Username must be at least 2 characters")
-			.max(100, "Username is too long"),
+		z.string().min(2, "Username must be at least 2 characters").max(100, "Username is too long"),
 	);
 
 export const loginSchema = z.object({

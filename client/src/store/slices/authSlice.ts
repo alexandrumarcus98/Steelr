@@ -1,11 +1,12 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { User } from "@/store/types/auth";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+import { IUser } from "@/store/types/auth";
+
 import api from "@/lib/api";
 import { setAuthToken as setApiToken } from "@/lib/api";
-
-// Define types
+import { normalizeApiError } from "@/lib/apiError";
 interface AuthState {
-	user: User | null;
+	user: IUser | null;
 	accessToken: string | null;
 	refreshToken: string | null;
 	isAuthenticated: boolean;
@@ -29,17 +30,15 @@ const initialState: AuthState = {
 // Thunks
 export const loginThunk = createAsyncThunk(
 	"auth/login",
-	async (
-		credentials: { email: string; password: string },
-		{ rejectWithValue }
-	) => {
+	async (credentials: { email: string; password: string }, { rejectWithValue }) => {
 		try {
 			const response = await api.post("/auth/login", credentials);
 			return response.data;
-		} catch (error: any) {
-			return rejectWithValue(error.response?.data?.message || "Login failed");
+		} catch (err) {
+			const { message } = normalizeApiError(err, "Registration failed. Please try again.");
+			return rejectWithValue(message);
 		}
-	}
+	},
 );
 
 export const generateOTPThunk = createAsyncThunk(
@@ -48,52 +47,44 @@ export const generateOTPThunk = createAsyncThunk(
 		try {
 			const response = await api.post("/auth/generate-otp", { email });
 			return response.data;
-		} catch (error: any) {
-			return rejectWithValue(
-				error.response?.data?.message || "Failed to generate OTP"
-			);
+		} catch (err) {
+			const { message } = normalizeApiError(err, "Registration failed. Please try again.");
+			return rejectWithValue(message);
 		}
-	}
+	},
 );
 
 export const verifyOTPThunk = createAsyncThunk(
 	"auth/verifyOTP",
-	async (
-		{ email, otp }: { email: string; otp: string },
-		{ rejectWithValue }
-	) => {
+	async ({ email, otp }: { email: string; otp: string }, { rejectWithValue }) => {
 		try {
 			const response = await api.post("/auth/verify-otp", { email, otp });
 			return response.data;
-		} catch (error: any) {
-			return rejectWithValue(
-				error.response?.data?.message || "OTP verification failed"
-			);
+		} catch (err) {
+			const { message } = normalizeApiError(err, "Registration failed. Please try again.");
+			return rejectWithValue(message);
 		}
-	}
+	},
 );
 
 export const logoutThunk = createAsyncThunk("auth/logout", async () => {
 	try {
 		await api.post("/auth/logout");
-	} catch (error) {
-		// Ignore logout errors
+	} catch (err) {
+		const { message } = normalizeApiError(err, "Registration failed. Please try again.");
+		return message;
 	}
 });
 
-// Slice
 const authSlice = createSlice({
 	name: "auth",
 	initialState,
 	reducers: {
-		setUser: (state, action: PayloadAction<User | null>) => {
+		setUser: (state, action: PayloadAction<IUser | null>) => {
 			state.user = action.payload;
 			state.isAuthenticated = !!action.payload;
 		},
-		setTokens: (
-			state,
-			action: PayloadAction<{ accessToken: string; refreshToken: string }>
-		) => {
+		setTokens: (state, action: PayloadAction<{ accessToken: string; refreshToken: string }>) => {
 			const { accessToken, refreshToken } = action.payload;
 			state.accessToken = accessToken;
 			state.refreshToken = refreshToken;
@@ -180,7 +171,6 @@ const authSlice = createSlice({
 	},
 });
 
-export const { setUser, setTokens, clearAuth, setRequiresOTP, clearError } =
-	authSlice.actions;
+export const { setUser, setTokens, clearAuth, setRequiresOTP, clearError } = authSlice.actions;
 
 export default authSlice.reducer;

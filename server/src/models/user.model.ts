@@ -99,6 +99,7 @@ const userSchema = new Schema(
 );
 
 userSchema.index({ "profileLocation.country": 1, "profileLocation.city": 1 });
+userSchema.index({ "profileLocation.city": "text", "profileLocation.country": "text" });
 userSchema.index({ signupIp: 1 });
 
 userSchema.set("toJSON", {

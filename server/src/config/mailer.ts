@@ -48,13 +48,6 @@ export const sendPasswordResetEmail = async (params: {
 		].join("\n");
 
 		if (!transporter) {
-			console.log("Password reset email fallback (no SMTP configured):");
-			console.log({
-				to: params.to,
-				from: fromAddress,
-				subject,
-				text,
-			});
 			return;
 		}
 
@@ -102,13 +95,6 @@ export const sendOTPEmail = async (params: {
 		].join("\n");
 
 		if (!transporter) {
-			console.log("OTP email fallback (no SMTP configured):");
-			console.log({
-				to: params.to,
-				from: fromAddress,
-				subject,
-				text,
-			});
 			return;
 		}
 
@@ -125,7 +111,6 @@ export const sendOTPEmail = async (params: {
 			`,
 		});
 
-		console.log(`OTP email sent successfully to ${params.to}`);
 	} catch (error) {
 		const errorMessage = error instanceof Error ? error.message : String(error);
 		console.error(`Failed to send OTP email to ${params.to}: ${errorMessage}`);

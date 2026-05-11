@@ -1,92 +1,77 @@
-import React, { useState, useEffect } from "react";
-import { useAuth } from "@/providers/auth";
-import api from "@/lib/api";
+import React, { useEffect } from "react";
 
-interface User {
-	id: string;
-	username: string;
-	email: string;
-	roles: string[];
-	isActive: boolean;
-	isVerified: boolean;
-}
+import { useAuth } from "@/hooks/useAuth";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchUsers } from "@/store/api/usersApi";
 
 const Users: React.FC = () => {
 	const { user } = useAuth();
-	const [users, setUsers] = useState<User[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState("");
+	const dispatch = useAppDispatch();
+	const { items: users, status, error } = useAppSelector((state) => state.users);
 
 	useEffect(() => {
-		const fetchUsers = async () => {
-			try {
-				const { data } = await api.get("/users");
-				setUsers(data.data || data);
-			} catch (err: any) {
-				setError(err.response?.data?.message || "Failed to load users");
-			} finally {
-				setLoading(false);
-			}
-		};
+		if (!user) return;
+		if (!user.roles?.includes("admin")) return;
 
-		if (user?.roles?.includes("admin")) {
-			fetchUsers();
-		} else {
-			setError("Access denied. Admin role required.");
-			setLoading(false);
+		if (status === "idle") {
+			dispatch(fetchUsers());
 		}
-	}, [user]);
+	}, [dispatch, user, status]);
 
-  if (loading) return <div className="text-sm text-slate-600 dark:text-slate-400">Loading users...</div>;
-  if (error) return <div className="text-sm text-red-600 dark:text-red-400">{error}</div>;
+	if (!user) {
+		return <div className="text-sm text-red-300">You must be logged in to view users.</div>;
+	}
+	if (!user.roles?.includes("admin")) {
+		return <div className="text-sm text-red-300">Access denied. Admin role required.</div>;
+	}
+	if (status === "loading") {
+		return <div className="text-sm text-slate-600">Loading users...</div>;
+	}
+	if (status === "failed") {
+		return <div className="text-sm text-red-300">{error ?? "Failed to load users"}</div>;
+	}
 
 	return (
 		<div className="mx-auto max-w-6xl">
-			<h1 className="mb-8 text-3xl font-bold text-slate-900 dark:text-slate-50">User Management</h1>
+			<h1 className="font-display mb-8 text-3xl font-bold text-slate-50">User Management</h1>
 
-			<div className="overflow-hidden rounded-lg bg-white shadow-md dark:bg-slate-900">
+			<div className="overflow-hidden rounded-lg border border-border-soft bg-surface shadow-md">
 				<table className="w-full">
-					<thead className="bg-slate-50 dark:bg-slate-800">
+					<thead className="bg-white/5">
 						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
 								Username
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
 								Email
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
 								Roles
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
 								Status
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 dark:text-slate-400">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
 								Actions
 							</th>
 						</tr>
 					</thead>
-					<tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
+					<tbody className="divide-y divide-border-soft">
 						{users.map((u) => (
 							<tr key={u.id}>
-								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-100">
+								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-100">
 									{u.username}
 								</td>
-								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
-									{u.email}
-								</td>
-								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">{u.email}</td>
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">
 									{u.roles?.join(", ") || "user"}
 								</td>
-								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500 dark:text-slate-400">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">
 									{u.isActive ? "Active" : "Inactive"} / {u.isVerified ? "Verified" : "Unverified"}
 								</td>
 								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
-									<button className="mr-4 text-sky-600 hover:text-sky-900 dark:text-sky-400 dark:hover:text-sky-300">
-										Edit
-									</button>
-									<button className="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300">
-										Delete
-									</button>
+									<button className="mr-4 text-cyan hover:opacity-80">Edit</button>
+									<button className="text-red-300 hover:opacity-80">Delete</button>
 								</td>
 							</tr>
 						))}

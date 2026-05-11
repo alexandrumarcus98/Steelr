@@ -1,14 +1,14 @@
-import type { PostItem } from "@/store/types/posts";
+import type { IPostItem } from "@/store/types/posts";
 
-export interface DashboardStats {
+export interface IDashboardStats {
 	totalPosts: number;
 	totalViews: number;
 	totalLikes: number;
-	recentPosts: PostItem[];
+	recentPosts: IPostItem[];
 }
 
-export interface DashboardState {
-	stats: DashboardStats | null;
+export interface IDashboardState {
+	stats: IDashboardStats | null;
 	status: "idle" | "loading" | "succeeded" | "failed";
 	error: string | null;
 }

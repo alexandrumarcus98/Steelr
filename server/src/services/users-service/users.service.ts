@@ -200,6 +200,7 @@ export const searchUsers = async (
 	query: string,
 	page: number,
 	limit: number,
+	radiusKm = 0, // New optional param
 ) => {
 	const currentUser = await UserModel.findById(currentUserId)
 		.select("profileLocation friendIds")
@@ -218,7 +219,19 @@ export const searchUsers = async (
 		_id: { $ne: currentUserId },
 	};
 
-	if (trimmedQuery) {
+	// Geo filter if radius provided
+	if (radiusKm > 0 && currentUser.profileLocation?.city) {
+		baseFilter.$or = [
+			{
+				"profileLocation.city": currentUser.profileLocation.city,
+				"profileLocation.country": currentUser.profileLocation.country,
+			},
+			{
+				"profileLocation.city": { $regex: escapedQuery, $options: "i" },
+				"profileLocation.country": { $regex: escapedQuery, $options: "i" },
+			},
+		];
+	} else if (trimmedQuery) {
 		baseFilter.$or = [
 			{ username: { $regex: escapedQuery, $options: "i" } },
 			{ email: { $regex: escapedQuery, $options: "i" } },
@@ -245,13 +258,7 @@ export const searchUsers = async (
 				trimmedQuery,
 			),
 		)
-		.sort((left, right) => {
-			if (right.score !== left.score) {
-				return right.score - left.score;
-			}
-
-			return left.user.username.localeCompare(right.user.username);
-		})
+		.sort((left, right) => right.score - left.score)
 		.filter((item) => !item.isSelf);
 
 	const start = (page - 1) * limit;

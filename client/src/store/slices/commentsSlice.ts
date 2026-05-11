@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { fetchCommentsForPost, createComment, updateComment, deleteComment } from "@/store/api/commentsApi";
+import {
+	createComment,
+	deleteComment,
+	fetchCommentsForPost,
+	updateComment,
+} from "@/store/api/commentsApi";
 import type { CommentsState } from "@/store/types/comments";
 
 const initialState: CommentsState = {
@@ -30,8 +35,7 @@ const commentsSlice = createSlice({
 			.addCase(fetchCommentsForPost.rejected, (state, action) => {
 				const postId = action.meta.arg;
 				state.statusByPostId[postId] = "failed";
-				state.errorByPostId[postId] =
-					action.error.message ?? "Failed to load comments";
+				state.errorByPostId[postId] = action.error.message ?? "Failed to load comments";
 			})
 			// create
 			.addCase(createComment.fulfilled, (state, action) => {
@@ -49,9 +53,7 @@ const commentsSlice = createSlice({
 			// delete
 			.addCase(deleteComment.fulfilled, (state, action) => {
 				const { postId, commentId } = action.payload;
-				state.byPostId[postId] = (state.byPostId[postId] ?? []).filter(
-					(c) => c.id !== commentId,
-				);
+				state.byPostId[postId] = (state.byPostId[postId] ?? []).filter((c) => c.id !== commentId);
 			});
 	},
 });

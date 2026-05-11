@@ -1,9 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import postsReducer from "@/store/slices/postsSlice";
+import authReducer from "@/store/slices/authSlice";
 import commentsReducer from "@/store/slices/commentsSlice";
 import dashboardReducer from "@/store/slices/dashboardSlice";
-import authReducer from "@/store/slices/authSlice";
+import postsReducer from "@/store/slices/postsSlice";
+import usersReducer from "@/store/slices/usersSlice";
 
 export const store = configureStore({
 	reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
 		comments: commentsReducer,
 		dashboard: dashboardReducer,
 		auth: authReducer,
+		users: usersReducer,
 	},
 });
 

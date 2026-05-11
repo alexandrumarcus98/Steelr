@@ -23,6 +23,7 @@ const LOCATION_POOL = [
 	{ city: "Paris", country: "France", region: "Île-de-France", continent: "Europe" },
 	{ city: "Madrid", country: "Spain", region: "Community of Madrid", continent: "Europe" },
 	{ city: "Tokyo", country: "Japan", region: "Kanto", continent: "Asia" },
+	{ city: "Cluj-Napoca", country: "Romania", region: "Cluj", continent: "Europe" },
 ];
 
 const seedData = async () => {

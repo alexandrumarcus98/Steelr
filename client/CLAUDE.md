@@ -15,6 +15,7 @@ This appears to be a React-based client-side application built with TypeScript. 
 ## Key Commands
 
 ### Development
+
 - `npm run dev` - Start development server with hot reloading
 - `npm run build` - Build the application for production
 - `npm run preview` - Preview the production build locally
@@ -23,6 +24,7 @@ This appears to be a React-based client-side application built with TypeScript. 
 - `npm run test:coverage` - Run tests with coverage reporting
 
 ### Testing
+
 - `npm run test -- --testNamePattern="name"` - Run a specific test by name
 - `npm run test -- --watchAll` - Watch all tests
 - `npm run test -- --coverage` - Generate test coverage report
@@ -30,6 +32,7 @@ This appears to be a React-based client-side application built with TypeScript. 
 ## Architecture Overview
 
 The application follows a component-based architecture with:
+
 - A clear separation of concerns between components, services, and utilities
 - TypeScript interfaces for type safety
 - React hooks for state management and side effects

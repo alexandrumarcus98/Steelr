@@ -34,11 +34,13 @@ export const searchUsers = async (
 		const query = typeof req.query.q === "string" ? req.query.q : "";
 		const page = Math.max(Number(req.query.page) || 1, 1);
 		const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 25);
+		const radiusKm = Number(req.query.radius) || 0; // e.g. ?radius=50
 		const { users, total } = await usersService.searchUsers(
 			currentUserId,
 			query,
 			page,
 			limit,
+			radiusKm
 		);
 
 		res.status(200).json({
@@ -48,6 +50,7 @@ export const searchUsers = async (
 				limit,
 				total,
 				totalPages: Math.ceil(total / limit),
+				radiusKm,
 			},
 		});
 	} catch (error) {

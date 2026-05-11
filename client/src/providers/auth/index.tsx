@@ -1,75 +1,60 @@
-import React, { createContext, useContext, ReactNode, useEffect } from "react";
+import React, { createContext, ReactNode, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
 	clearAuth,
-	setTokens,
-	setUser,
+	generateOTPThunk,
 	loginThunk,
 	logoutThunk,
+	setTokens,
+	setUser,
 	verifyOTPThunk,
-	generateOTPThunk,
 } from "@/store/slices/authSlice";
-import type { User } from "@/store/types/auth";
 import api, { setAuthToken } from "@/lib/api";
+import { normalizeApiError } from "@/lib/apiError";
 
-interface LoginResult {
+import { IUser } from "@/store/types/auth";
+interface ILoginResult {
 	requiresOTP: boolean;
 	message: string;
 	tempEmail?: string;
-	expiresAt?: string;
+	expiresAt?: string | number;
 }
 
-interface OTPResult {
-	expiresAt?: string;
+interface IOTPResult {
+	message: string;
+	reused?: boolean;
+	expiresAt?: string | number;
 }
 
-interface AuthContextType {
-	user: User | null;
+interface IAuthContextType {
+	user: IUser | null;
 	token: string | null;
 	isAuthenticated: boolean;
 	loading: boolean;
-	register: (data: {
-		username: string;
-		email: string;
-		password: string;
-	}) => Promise<void>;
-	login: (data: { email: string; password: string }) => Promise<LoginResult>;
+	register: (data: { username: string; email: string; password: string }) => Promise<void>;
+	login: (data: { email: string; password: string }) => Promise<ILoginResult>;
 	logout: () => Promise<void>;
-	generateOTP: (email: string) => Promise<OTPResult>;
+	generateOTP: (email: string) => Promise<IOTPResult>;
 	verifyOTP: (email: string, otp: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<IAuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-	const context = useContext(AuthContext);
-	if (!context) throw new Error("useAuth must be used within AuthProvider");
-	return context;
-};
-
-interface AuthProviderProps {
-	children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const dispatch = useAppDispatch();
-	const { user, accessToken, isAuthenticated, loading } = useAppSelector(
-		(state) => state.auth
-	);
+	const { user, accessToken, isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
 	useEffect(() => {
 		setAuthToken(accessToken);
 	}, [accessToken]);
 
 	useEffect(() => {
-		if (!accessToken || user) {
-			return;
-		}
+		if (!accessToken || user) return;
 
 		const bootstrapSession = async (): Promise<void> => {
 			try {
 				const response = await api.get("/auth/me");
-				dispatch(setUser(response.data.user as User));
+				dispatch(setUser(response.data.user as IUser));
 			} catch {
 				dispatch(clearAuth());
 			}
@@ -78,26 +63,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 		void bootstrapSession();
 	}, [accessToken, user, dispatch]);
 
-	const register = async (data: {
-		username: string;
-		email: string;
-		password: string;
-	}) => {
-		const response = await api.post("/auth/register", data);
-		const access = response.data.accessToken as string | undefined;
-		const refresh = (response.data.refreshToken as string | undefined) || "";
-		const registeredUser = response.data.user as User | undefined;
-
-		if (!access || !registeredUser) {
-			throw new Error("Registration failed");
+	const register = async (data: { username: string; email: string; password: string }) => {
+		try {
+			const response = await api.post("/auth/register", data);
+			const access = response.data.accessToken as string | undefined;
+			const refresh = (response.data.refreshToken as string | undefined) || "";
+			const registeredUser = response.data.user as IUser | undefined;
+			if (!access || !registeredUser) {
+				throw new Error("Registration failed");
+			}
+			dispatch(setTokens({ accessToken: access, refreshToken: refresh }));
+			dispatch(setUser(registeredUser));
+		} catch (err) {
+			const { message } = normalizeApiError(err, "Registration failed. Please try again.");
+			throw new Error(message);
 		}
-
-		dispatch(setTokens({ accessToken: access, refreshToken: refresh }));
-		dispatch(setUser(registeredUser));
 	};
 
 	const login = async (loginData: { email: string; password: string }) => {
-		return dispatch(loginThunk(loginData)).unwrap() as Promise<LoginResult>;
+		return dispatch(loginThunk(loginData)).unwrap() as Promise<ILoginResult>;
 	};
 
 	const logout = async () => {
@@ -106,14 +90,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 	};
 
 	const generateOTP = async (email: string) => {
-		return dispatch(generateOTPThunk(email)).unwrap() as Promise<OTPResult>;
+		return dispatch(generateOTPThunk(email)).unwrap() as Promise<IOTPResult>;
 	};
 
 	const verifyOTP = async (email: string, otp: string) => {
 		await dispatch(verifyOTPThunk({ email, otp })).unwrap();
 	};
 
-	const value: AuthContextType = {
+	const value: IAuthContextType = {
 		user,
 		token: accessToken,
 		isAuthenticated,
@@ -127,3 +111,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthContext;

@@ -1,17 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import api from "@/lib/api";
-import { USERS_ENDPOINT } from "@/lib/usersEndpoints";
 import type {
 	FriendActionResult,
-	SearchUsersParams,
-	SearchUsersResult,
+	ISearchUsersParams,
+	ISearchUsersResult,
 } from "@/store/types/users";
-import type { UserSearchResult } from "@/store/types/users";
+import type { IUserSearchResult } from "@/store/types/users";
 
-const normalizeUserSearchResult = (
-	raw: Record<string, unknown>,
-): UserSearchResult => ({
+import api from "@/lib/api";
+import { USERS_ENDPOINT } from "@/lib/usersEndpoints";
+
+const normalizeIUserSearchResult = (raw: Record<string, unknown>): IUserSearchResult => ({
 	id: String(raw.id ?? raw._id ?? ""),
 	username: typeof raw.username === "string" ? raw.username : "",
 	email: typeof raw.email === "string" ? raw.email : "",
@@ -48,43 +47,39 @@ const normalizeUserSearchResult = (
 							: undefined,
 				}
 			: undefined,
-	friendsCount:
-		typeof raw.friendsCount === "number" ? raw.friendsCount : 0,
+	friendsCount: typeof raw.friendsCount === "number" ? raw.friendsCount : 0,
 	isFriend: typeof raw.isFriend === "boolean" ? raw.isFriend : false,
-	distanceLabel:
-		typeof raw.distanceLabel === "string" ? raw.distanceLabel : "Distant",
+	distanceLabel: typeof raw.distanceLabel === "string" ? raw.distanceLabel : "Distant",
 });
 
-export const searchUsers = createAsyncThunk<
-	SearchUsersResult,
-	SearchUsersParams
->("users/search", async ({ query, page = 1, limit = 8 }) => {
-	const { data } = await api.get(`${USERS_ENDPOINT}/search`, {
-		params: { q: query, page, limit },
-	});
+export const searchUsers = createAsyncThunk<ISearchUsersResult, ISearchUsersParams>(
+	"users/search",
+	async ({ query, page = 1, limit = 8 }) => {
+		const { data } = await api.get(`${USERS_ENDPOINT}/search`, {
+			params: { q: query, page, limit },
+		});
 
-	const rawItems = Array.isArray(data?.data)
-		? data.data
-		: Array.isArray(data?.items)
-			? data.items
-			: Array.isArray(data)
-				? data
-				: [];
+		const rawItems = Array.isArray(data?.data)
+			? data.data
+			: Array.isArray(data?.items)
+				? data.items
+				: Array.isArray(data)
+					? data
+					: [];
 
-	const users = rawItems
-		.filter((item: unknown) => typeof item === "object" && item !== null)
-		.map((item: unknown) =>
-			normalizeUserSearchResult(item as Record<string, unknown>),
-		)
-		.filter((user: UserSearchResult) => Boolean(user.id));
+		const users = rawItems
+			.filter((item: unknown) => typeof item === "object" && item !== null)
+			.map((item: unknown) => normalizeIUserSearchResult(item as Record<string, unknown>))
+			.filter((user: IUserSearchResult) => Boolean(user.id));
 
-	return {
-		users,
-		total: typeof data?.meta?.total === "number" ? data.meta.total : users.length,
-		page,
-		limit,
-	};
-});
+		return {
+			users,
+			total: typeof data?.meta?.total === "number" ? data.meta.total : users.length,
+			page,
+			limit,
+		};
+	},
+);
 
 export const addFriend = createAsyncThunk<FriendActionResult, string>(
 	"users/addFriend",
@@ -92,8 +87,7 @@ export const addFriend = createAsyncThunk<FriendActionResult, string>(
 		const { data } = await api.post(`${USERS_ENDPOINT}/${userId}/friends`);
 		return {
 			isFriend: typeof data?.isFriend === "boolean" ? data.isFriend : true,
-			friendsCount:
-				typeof data?.friendsCount === "number" ? data.friendsCount : 0,
+			friendsCount: typeof data?.friendsCount === "number" ? data.friendsCount : 0,
 		};
 	},
 );
@@ -104,8 +98,29 @@ export const removeFriend = createAsyncThunk<FriendActionResult, string>(
 		const { data } = await api.delete(`${USERS_ENDPOINT}/${userId}/friends`);
 		return {
 			isFriend: typeof data?.isFriend === "boolean" ? data.isFriend : false,
-			friendsCount:
-				typeof data?.friendsCount === "number" ? data.friendsCount : 0,
+			friendsCount: typeof data?.friendsCount === "number" ? data.friendsCount : 0,
 		};
+	},
+);
+
+export const fetchUsers = createAsyncThunk<IUserSearchResult[], void>(
+	"users/fetchUsers",
+	async () => {
+		const { data } = await api.get(USERS_ENDPOINT);
+
+		const rawItems = Array.isArray(data?.data)
+			? data.data
+			: Array.isArray(data?.items)
+				? data.items
+				: Array.isArray(data)
+					? data
+					: [];
+
+		const users = rawItems
+			.filter((item: unknown) => typeof item === "object" && item !== null)
+			.map((item: unknown) => normalizeIUserSearchResult(item as Record<string, unknown>))
+			.filter((user: IUserSearchResult) => Boolean(user.id));
+
+		return users;
 	},
 );

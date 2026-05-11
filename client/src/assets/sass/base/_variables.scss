@@ -1,0 +1,6 @@
+// Dark mode mixin
+@mixin dark {
+	:where(.dark, .dark *) & {
+		@content;
+	}
+}

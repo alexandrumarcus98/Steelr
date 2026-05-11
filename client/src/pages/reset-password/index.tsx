@@ -1,23 +1,15 @@
 import React, { useEffect, useState } from "react";
-import {
-	Link,
-	useLocation,
-	useSearchParams,
-	useNavigate,
-} from "react-router-dom";
-import { useForm } from "react-hook-form";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
+import { PASSWORD_RESET_ENDPOINT, PASSWORD_RESET_TOKEN_VERIFY_ENDPOINT } from "@/lib/authEndpoints";
 import api from "@/lib/api";
-import {
-	PASSWORD_RESET_ENDPOINT,
-	PASSWORD_RESET_TOKEN_VERIFY_ENDPOINT,
-} from "@/lib/authEndpoints";
-import {
-	resetPasswordSchema,
-	type ResetPasswordFormData,
-} from "@/components/auth/validation";
-import TickGreen from "../../components/tick/Tick";
+import { normalizeApiError } from "@/lib/apiError";
+
+import TickGreen from "@/components/custom-components/tick/Tick";
+
+import { type ResetPasswordFormData, resetPasswordSchema } from "@/components/auth/validation";
 
 const ResetPassword: React.FC = () => {
 	const [searchParams] = useSearchParams();
@@ -27,9 +19,7 @@ const ResetPassword: React.FC = () => {
 	const [isTokenValid, setIsTokenValid] = useState(false);
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
-	const [successMessage, setSuccessMessage] = React.useState<string | null>(
-		null
-	);
+	const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
 
 	const {
 		register,
@@ -50,7 +40,7 @@ const ResetPassword: React.FC = () => {
 				if (!token) {
 					if (isActive) {
 						setWarningMessage(
-							"This reset link is invalid or has expired. Please request a new one."
+							"This reset link is invalid or has expired. Please request a new one.",
 						);
 						setLoading(false);
 					}
@@ -72,7 +62,7 @@ const ResetPassword: React.FC = () => {
 				} catch {
 					if (isActive) {
 						setWarningMessage(
-							"This reset link is invalid or has expired. Please request a new one."
+							"This reset link is invalid or has expired. Please request a new one.",
 						);
 						setLoading(false);
 					}
@@ -102,24 +92,21 @@ const ResetPassword: React.FC = () => {
 			});
 			setSuccessMessage("Password updated successfully. You can now sign in.");
 			setTimeout(() => navigate("/login", { replace: true }), 1200);
-		} catch (error: unknown) {
-			const errorMessage =
-				error instanceof Error ? error.message : "Unable to reset password";
+		} catch (err) {
+			const { message } = normalizeApiError(err, "Failed to reset password. Please try again.");
 			setSuccessMessage(null);
-			console.error("Reset password failed:", errorMessage);
+			setWarningMessage(message);
 		}
 	};
 
 	return (
 		<>
 			{isLoading && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm dark:bg-slate-950/70">
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
 					{!isTokenValid && (
 						<div className="flex flex-col items-center gap-3">
-							<div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-900 dark:border-slate-800 dark:border-t-slate-100" />
-							<p className="text-sm font-medium text-slate-700 dark:text-slate-300">
-								Checking reset link...
-							</p>
+							<div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-900" />
+							<p className="text-sm font-medium">Checking reset link...</p>
 						</div>
 					)}
 
@@ -127,17 +114,17 @@ const ResetPassword: React.FC = () => {
 				</div>
 			)}
 
-			<div className="min-h-screen min-w-full bg-slate-50 px-4 py-8 text-slate-900 transition-colors duration-200 dark:bg-slate-950 dark:text-slate-100 sm:px-8 lg:px-16">
-				<div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-5xl flex-col items-center justify-center">
-					<h1 className="w-full text-center text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50 sm:text-6xl">
+			<div className="min-h-screen min-w-full bg-bg px-4 py-8 text-slate-100 transition-colors duration-200 sm:px-8 lg:px-16">
+				<div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center">
+					<h1 className="font-display w-full text-center text-4xl font-semibold tracking-tight text-slate-50 sm:text-6xl">
 						Choose a new password
 					</h1>
-					<p className="mt-6 w-full text-center text-base leading-7 text-slate-500 dark:text-slate-400 sm:text-xl">
+					<p className="mt-6 w-full text-center text-base leading-7 text-slate-300 sm:text-xl">
 						Enter your new password below to complete the reset process.
 					</p>
 
 					{!isLoading && warningMessage && (
-						<div className="mt-8 w-full max-w-xl rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/40 dark:text-amber-300">
+						<div className="mt-8 w-full max-w-xl rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-sm text-amber-200">
 							{warningMessage}
 						</div>
 					)}
@@ -151,7 +138,7 @@ const ResetPassword: React.FC = () => {
 							<div>
 								<label
 									htmlFor="password"
-									className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+									className="mb-1.5 block text-sm font-medium text-slate-300"
 								>
 									New password
 								</label>
@@ -159,20 +146,18 @@ const ResetPassword: React.FC = () => {
 									type="password"
 									id="password"
 									placeholder="Create a new password"
-									className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100 dark:focus:ring-slate-100/10"
+									className="w-full rounded-xl border border-border-soft bg-surface/80 px-3.5 py-2.5 text-sm text-slate-100 outline-none transition-all duration-300 placeholder:text-slate-500 focus:border-cyan focus:ring-2 focus:ring-cyan/15"
 									{...register("password")}
 								/>
 								{errors.password && (
-									<p className="mt-1.5 text-xs text-red-600 dark:text-red-400">
-										{errors.password.message}
-									</p>
+									<p className="mt-1.5 text-xs text-red-300">{errors.password.message}</p>
 								)}
 							</div>
 
 							<div>
 								<label
 									htmlFor="confirmPassword"
-									className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300"
+									className="mb-1.5 block text-sm font-medium text-slate-300"
 								>
 									Confirm password
 								</label>
@@ -180,38 +165,36 @@ const ResetPassword: React.FC = () => {
 									type="password"
 									id="confirmPassword"
 									placeholder="Repeat your new password"
-									className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition-all duration-300 placeholder:text-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-slate-100 dark:focus:ring-slate-100/10"
+									className="w-full rounded-xl border border-border-soft bg-surface/80 px-3.5 py-2.5 text-sm text-slate-100 outline-none transition-all duration-300 placeholder:text-slate-500 focus:border-cyan focus:ring-2 focus:ring-cyan/15"
 									{...register("confirmPassword")}
 								/>
 								{errors.confirmPassword && (
-									<p className="mt-1.5 text-xs text-red-600 dark:text-red-400">
-										{errors.confirmPassword.message}
-									</p>
+									<p className="mt-1.5 text-xs text-red-300">{errors.confirmPassword.message}</p>
 								)}
 							</div>
 
 							<button
 								type="submit"
 								disabled={isSubmitting || !token}
-								className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+								className="inline-flex w-full items-center justify-center rounded-xl bg-cyan px-4 py-2.5 text-sm font-medium text-bg transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-70"
 							>
 								{isSubmitting ? "Updating password..." : "Update password"}
 							</button>
 
 							{successMessage && (
-								<div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 dark:border-emerald-900/40 dark:bg-emerald-950/40 dark:text-emerald-300">
+								<div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
 									{successMessage}
 								</div>
 							)}
 						</form>
 					)}
 
-					<p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+					<p className="mt-6 text-center text-sm text-slate-400">
 						Remembered your password?{" "}
 						<Link
 							to="/login"
 							state={{ from: pathname }}
-							className="font-medium text-slate-900 transition-all duration-300 hover:opacity-70 dark:text-slate-100"
+							className="font-medium text-slate-100 transition-all duration-300 hover:opacity-70"
 						>
 							Sign in
 						</Link>

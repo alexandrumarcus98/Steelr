@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { CommentModel, PostModel } from "@/models";
 
-export const getCommentsForPost = async (postId: string) => {
+const getCommentsForPost = async (postId: string) => {
 	if (!mongoose.Types.ObjectId.isValid(postId)) {
 		throw new Error("Invalid post ID");
 	}
@@ -14,7 +14,7 @@ export const getCommentsForPost = async (postId: string) => {
 	return comments;
 };
 
-export const createComment = async (postId: string, userId: string, content: string) => {
+const createComment = async (postId: string, userId: string, content: string) => {
 	if (!mongoose.Types.ObjectId.isValid(postId)) {
 		throw new Error("Invalid post ID");
 	}
@@ -35,7 +35,7 @@ export const createComment = async (postId: string, userId: string, content: str
 	return comment;
 };
 
-export const updateComment = async (
+const updateComment = async (
 	commentId: string,
 	userId: string,
 	content: string,
@@ -57,7 +57,7 @@ export const updateComment = async (
 	return comment;
 };
 
-export const deleteComment = async (commentId: string, userId: string) => {
+const deleteComment = async (commentId: string, userId: string) => {
 	if (!mongoose.Types.ObjectId.isValid(commentId)) {
 		throw new Error("Invalid comment ID");
 	}
@@ -75,4 +75,11 @@ export const deleteComment = async (commentId: string, userId: string) => {
 		{ _id: deleted.post },
 		{ $inc: { commentsCount: -1 } },
 	);
+};
+
+export const commentsService = {
+	getCommentsForPost,
+	createComment,
+	updateComment,
+	deleteComment,
 };

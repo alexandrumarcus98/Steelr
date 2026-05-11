@@ -1,4 +1,4 @@
-export interface CommentItem {
+export interface ICommentItem {
 	id: string;
 	postId: string;
 	content: string;
@@ -11,8 +11,8 @@ export interface CommentItem {
 	};
 }
 
-export interface CommentsState {
-	byPostId: Record<string, CommentItem[]>;
+export interface ICommentsState {
+	byPostId: Record<string, ICommentItem[]>;
 	statusByPostId: Record<string, "idle" | "loading" | "succeeded" | "failed">;
 	errorByPostId: Record<string, string | null>;
 }

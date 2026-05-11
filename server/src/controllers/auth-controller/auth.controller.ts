@@ -1,34 +1,30 @@
 import type { NextFunction, Request, Response } from "express";
+
+import { UserModel } from "@/models";
+
+import { authService } from "@/services/auth-service/auth.service";
+import { otpService } from "@/services/otp-service/otp.service";
+
 import type {
 	ForgotPasswordBody,
 	LoginBody,
 	RegisterBody,
 	ResetPasswordBody,
 } from "@/types/auth-api";
-import { toUserResponse } from "@/types/user";
-import * as authService from "@/services/auth-service/auth.service";
-import * as otpService from "@/services/otp-service/otp.service";
-import { UserModel } from "@/models";
-import {
-	signAccessToken,
-	signRefreshToken,
-} from "@/services/auth-service/auth.service";
 import type { UserRole } from "@/models";
+import { toUserResponse } from "@/types/user";
 
-export const register = async (
+const register = async (
 	req: Request,
 	res: Response,
 	_next: NextFunction,
 ) => {
 	try {
-		const forwardedFor = req.headers["x-forwarded-for"];
-		const forwardedIp =
-			typeof forwardedFor === "string" ? forwardedFor.split(",")[0]?.trim() : undefined;
-		const signupIp = forwardedIp || req.ip || undefined;
-
-		const result = await authService.registerUser(req.body as RegisterBody, {
-			signupIp,
-		});
+		const clientIp = req.headers["x-forwarded-for"]?.toString().split(",")[0]?.trim() ||
+			req.headers["x-real-ip"]?.toString().trim() ||
+			req.ip ||
+			"unknown";
+		const result = await authService.register(req.body as RegisterBody, { signupIp: clientIp });
 		res.status(201).json(result);
 	} catch (error) {
 		if (error instanceof Error) {
@@ -55,7 +51,7 @@ export const register = async (
 	}
 };
 
-export const login = async (
+const login = async (
 	req: Request,
 	res: Response,
 	_next: NextFunction,
@@ -79,7 +75,9 @@ export const login = async (
 			}
 
 			res.status(200).json({
-				message: "OTP sent to your email",
+				message: otpResult.reused
+					? "An active OTP already exists for this login"
+					: "OTP sent to your email",
 				requiresOTP: true,
 				tempEmail: result.user.email,
 				expiresAt: otpResult.expiresAt,
@@ -100,17 +98,19 @@ export const login = async (
 			error instanceof Error ? error.message : error,
 		);
 
+		console.log("Login error details:", error);
+
 		res.status(500).json({ message: "Failed to login" });
 	}
 };
 
-export const forgotPassword = async (
+const forgotPassword = async (
 	req: Request,
 	res: Response,
 	_next: NextFunction,
 ) => {
 	try {
-		const result = await authService.createPasswordReset(
+		const result = await authService.forgotPassword(
 			req.body as ForgotPasswordBody,
 		);
 
@@ -135,7 +135,7 @@ export const forgotPassword = async (
 	}
 };
 
-export const resetPassword = async (
+const resetPassword = async (
 	req: Request,
 	res: Response,
 	_next: NextFunction,
@@ -159,32 +159,7 @@ export const resetPassword = async (
 	}
 };
 
-export const verifyResetPasswordToken = async (
-	req: Request,
-	res: Response,
-	_next: NextFunction,
-) => {
-	try {
-		const token = typeof req.query.token === "string" ? req.query.token : "";
-
-		await authService.verifyResetPasswordToken(token);
-
-		res.status(200).json({ valid: true });
-	} catch (error) {
-		if (
-			error instanceof Error &&
-			(error.message === "token is required" ||
-				error.message === "Invalid or expired recovery token")
-		) {
-			res.status(400).json({ message: error.message });
-			return;
-		}
-
-		res.status(500).json({ message: "Failed to verify reset token" });
-	}
-};
-
-export const me = async (req: Request, res: Response, _next: NextFunction) => {
+const me = async (req: Request, res: Response, _next: NextFunction) => {
 	try {
 		const user = await authService.getCurrentUser(req.user?.id);
 
@@ -199,7 +174,7 @@ export const me = async (req: Request, res: Response, _next: NextFunction) => {
 	}
 };
 
-export const logout = async (
+const logout = async (
 	_req: Request,
 	res: Response,
 	_next: NextFunction,
@@ -207,7 +182,7 @@ export const logout = async (
 	res.status(200).json({ message: "Logged out" });
 };
 
-export const generateOTP = async (
+const generateOTP = async (
 	req: Request,
 	res: Response,
 	_next: NextFunction,
@@ -230,8 +205,10 @@ export const generateOTP = async (
 		}
 
 		res.status(200).json({
-			message: "If the account exists, an OTP has been sent",
-			expiresAt: result.expiresAt, // ← Add this
+			message: result.reused
+				? "If the account exists, an active OTP already exists"
+				: "If the account exists, an OTP has been sent",
+			expiresAt: result.expiresAt,
 		});
 	} catch (error) {
 		if (error instanceof Error && error.message === "email is required") {
@@ -243,7 +220,7 @@ export const generateOTP = async (
 	}
 };
 
-export const verifyOTPStatus = async (
+const verifyOTPStatus = async (
 	req: Request,
 	res: Response,
 	_next: NextFunction,
@@ -263,10 +240,7 @@ export const verifyOTPStatus = async (
 			return;
 		}
 
-		// Generate tokens after successful OTP verification
-		const user = await UserModel.findOne({ email: email.toLowerCase().trim() })
-			.select("username email roles isVerified isActive profileLocation friendIds signupIp createdAt updatedAt")
-			.exec();
+		const user = await UserModel.findOne({ email: email.toLowerCase().trim() });
 		if (!user) {
 			res.status(404).json({ message: "User not found" });
 			return;
@@ -275,12 +249,12 @@ export const verifyOTPStatus = async (
 		user.lastLoginAt = new Date();
 		await user.save();
 
-		const accessToken = signAccessToken({
+		const accessToken = authService.signAccessToken({
 			sub: user.id,
 			roles: user.roles as UserRole[],
 		});
 
-		const refreshToken = signRefreshToken({
+		const refreshToken = authService.signRefreshToken({
 			sub: user.id,
 			roles: user.roles as UserRole[],
 		});
@@ -308,4 +282,49 @@ export const verifyOTPStatus = async (
 
 		res.status(500).json({ message: "Failed to verify OTP" });
 	}
+};
+
+const verifyResetPasswordToken = async (
+	req: Request,
+	res: Response,
+	_next: NextFunction,
+) => {
+	try {
+		const { token } = req.query;
+
+		if (typeof token !== "string" || !token) {
+			res.status(400).json({ message: "token is required" });
+			return;
+		}
+
+		await authService.verifyResetPasswordToken(token);
+		res.status(200).json({ message: "Token is valid" });
+	} catch (error) {
+		if (error instanceof Error && error.message === "token is required") {
+			res.status(400).json({ message: error.message });
+			return;
+		}
+
+		if (
+			error instanceof Error &&
+			error.message === "Invalid or expired recovery token"
+		) {
+			res.status(400).json({ message: error.message });
+			return;
+		}
+
+		res.status(500).json({ message: "Failed to verify recovery token" });
+	}
+};
+
+export const authController = {
+	register,
+	login,
+	forgotPassword,
+	resetPassword,
+	me,
+	logout,
+	generateOTP,
+	verifyOTPStatus,
+	verifyResetPasswordToken,
 };

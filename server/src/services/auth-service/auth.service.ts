@@ -1,10 +1,13 @@
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
 import "dotenv/config";
 
 import { getPasswordResetUrl, sendPasswordResetEmail } from "@/config/mailer";
 import { UserModel, type UserRole } from "@/models";
+import { getGeolocationFromIP } from "@/lib/geolocation";
+
 import type {
 	AuthPayload,
 	AuthResult,
@@ -15,9 +18,7 @@ import type {
 } from "@/types/auth-api";
 import { toUserResponse } from "@/types/user";
 import { isDuplicateKeyError, isValidationError } from "@/utils/errors";
-export { isDuplicateKeyError, isValidationError };
-
-import type { SignOptions } from "jsonwebtoken";
+import { th } from "@faker-js/faker";
 
 const SALT_ROUNDS = 12;
 const RESET_TOKEN_EXPIRES_IN_MS = 15 * 60 * 1000;
@@ -32,7 +33,7 @@ const getAccessTokenSecret = (): string => {
 	return secret;
 };
 
-export const signAccessToken = (payload: AuthPayload): string => {
+const signAccessToken = (payload: AuthPayload): string => {
 	const expiresIn = (process.env.JWT_ACCESS_EXPIRES_IN ||
 		"1h") as SignOptions["expiresIn"];
 
@@ -68,9 +69,7 @@ const signRefreshToken = (payload: AuthPayload): string => {
 	});
 };
 
-export { signRefreshToken };
-
-export const registerUser = async (
+const registerUser = async (
 	body: RegisterBody,
 	context?: { signupIp?: string },
 ): Promise<AuthResult> => {
@@ -85,14 +84,46 @@ export const registerUser = async (
 	}
 
 	const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+
+	let profileLocation: {
+		city: string;
+		country: string;
+		region: string;
+		continent: string;
+		source: "manual" | "signup-ip";
+	} = {
+		city: "",
+		country: "",
+		region: "",
+		continent: "",
+		source: "manual" as const,
+	};
+
+
+	if (context?.signupIp && context.signupIp !== "unknown") {
+		try {
+			const geo = await getGeolocationFromIP(context.signupIp);
+			if (geo) {
+				profileLocation = {
+					city: geo.city,
+					country: geo.country,
+					region: geo.region,
+					continent: geo.continent,
+					source: "signup-ip" as const, // Matches your enum
+				};
+			}
+		} catch (err) {
+			console.warn("Geo lookup failed:", err);
+			throw new Error("Failed to determine geolocation from IP");
+		}
+	}
+
 	const user = await UserModel.create({
 		username,
 		email,
 		passwordHash,
 		signupIp: context?.signupIp ?? null,
-		profileLocation: {
-			source: context?.signupIp ? "signup-ip" : "manual",
-		},
+		profileLocation,
 	});
 	const accessToken = signAccessToken({
 		sub: user.id,
@@ -105,7 +136,7 @@ export const registerUser = async (
 	};
 };
 
-export const validateLoginCredentials = async (
+const validateLoginCredentials = async (
 	body: LoginBody,
 ): Promise<{
 	isValid: boolean;
@@ -139,7 +170,7 @@ export const validateLoginCredentials = async (
 	};
 };
 
-export const loginUser = async (
+const loginUser = async (
 	body: LoginBody,
 ): Promise<AuthResult | null> => {
 	const { email, password } = body;
@@ -177,7 +208,7 @@ export const loginUser = async (
 	};
 };
 
-export const createPasswordReset = async (
+const createPasswordReset = async (
 	body: ForgotPasswordBody,
 ): Promise<{ emailSent: boolean }> => {
 	const { email } = body;
@@ -211,7 +242,7 @@ export const createPasswordReset = async (
 	return { emailSent: true };
 };
 
-export const resetPassword = async (body: ResetPasswordBody): Promise<void> => {
+const resetPassword = async (body: ResetPasswordBody): Promise<void> => {
 	const { token, password, confirmPassword } = body;
 
 	if (!token || !password) {
@@ -245,7 +276,7 @@ export const resetPassword = async (body: ResetPasswordBody): Promise<void> => {
 	await user.save();
 };
 
-export const verifyResetPasswordToken = async (token: string): Promise<void> => {
+const verifyResetPasswordToken = async (token: string): Promise<void> => {
 	if (!token) {
 		throw new Error("token is required");
 	}
@@ -264,7 +295,7 @@ export const verifyResetPasswordToken = async (token: string): Promise<void> => 
 	}
 };
 
-export const getCurrentUser = async (userId?: string) => {
+const getCurrentUser = async (userId?: string) => {
 	if (!userId) {
 		return null;
 	}
@@ -275,4 +306,18 @@ export const getCurrentUser = async (userId?: string) => {
 		)
 		.lean()
 		.exec();
+};
+
+export const authService = {
+	register: registerUser,
+	login: loginUser,
+	forgotPassword: createPasswordReset,
+	resetPassword,
+	verifyResetPasswordToken,
+	getCurrentUser,
+	signAccessToken: signAccessToken,
+	signRefreshToken: signRefreshToken,
+	isDuplicateKeyError,
+	isValidationError,
+	validateLoginCredentials
 };
