@@ -1,0 +1,91 @@
+@media (max-width: 1024px) {
+	.features-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	.feat-card.large {
+		grid-row: auto;
+		grid-column: 1/3;
+	}
+}
+
+@media (max-width: 768px) {
+	.hero {
+		grid-template-columns: 1fr;
+		gap: 3rem;
+		text-align: center;
+	}
+
+	.hero-label {
+		justify-content: center;
+	}
+
+	.hero-actions {
+		justify-content: center;
+	}
+
+	.hero-note {
+		text-align: center;
+	}
+
+	.swatch-banner {
+		margin-inline: auto;
+	}
+
+	.hero-visual {
+		display: flex;
+		justify-content: center;
+	}
+
+	.features-header {
+		grid-template-columns: 1fr;
+	}
+
+	.features-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.feat-card.large {
+		grid-row: auto;
+		grid-column: auto;
+	}
+
+	.testimonial-grid {
+		grid-template-columns: 1fr;
+	}
+
+	.cta-inner {
+		grid-template-columns: 1fr;
+	}
+
+	.cta-actions {
+		flex-direction: column;
+	}
+
+	.nav-links {
+		display: none;
+	}
+
+	.hamburger {
+		display: flex;
+	}
+
+	.nav-right .btn {
+		display: none;
+	}
+
+	.nav-right .btn:last-child {
+		display: inline-flex;
+	}
+}
+
+@media (max-width: 480px) {
+	.social-mockup {
+		max-width: 100%;
+	}
+
+	.badge-top,
+	.badge-bottom {
+		display: none;
+	}
+}

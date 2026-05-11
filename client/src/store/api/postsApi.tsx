@@ -1,16 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+
 import api from "@/lib/api";
 
-import type { PostItem } from "@/store/types/posts";
-import { FetchPostsResult, FetchPostsParams } from "@/store/types/posts";
+import type { IPostItem } from "@/store/types/posts";
+import { IFetchPostsParams, IFetchPostsResult } from "@/store/types/posts";
 
 const POSTS_ENDPOINT = import.meta.env.VITE_POSTS_ENDPOINT || "/posts";
 
-export const fetchPosts = createAsyncThunk<FetchPostsResult, FetchPostsParams>(
+export const fetchPosts = createAsyncThunk<IFetchPostsResult, IFetchPostsParams>(
 	"posts/fetchPosts",
 	async ({ sort, page, limit }) => {
-		const endpoint =
-			sort === "mostViewed" ? `${POSTS_ENDPOINT}/most-viewed` : POSTS_ENDPOINT;
+		const endpoint = sort === "mostViewed" ? `${POSTS_ENDPOINT}/most-viewed` : POSTS_ENDPOINT;
 		const { data } = await api.get(endpoint, {
 			params: {
 				page,
@@ -29,7 +29,7 @@ export const fetchPosts = createAsyncThunk<FetchPostsResult, FetchPostsParams>(
 		const normalizedItems = rawItems
 			.filter((item: unknown) => typeof item === "object" && item !== null)
 			.map((item: unknown) => normalizePost(item as Record<string, unknown>))
-			.filter((post: PostItem) => post.id);
+			.filter((post: IPostItem) => post.id);
 
 		const hasMore =
 			typeof data?.meta?.hasMore === "boolean"
@@ -44,7 +44,7 @@ export const fetchPosts = createAsyncThunk<FetchPostsResult, FetchPostsParams>(
 	},
 );
 
-export const fetchMostViewedPosts = createAsyncThunk<PostItem[], number>(
+export const fetchMostViewedPosts = createAsyncThunk<IPostItem[], number>(
 	"posts/fetchMostViewed",
 	async (limit = 10) => {
 		const { data } = await api.get(`${POSTS_ENDPOINT}/most-viewed`, {
@@ -62,13 +62,13 @@ export const fetchMostViewedPosts = createAsyncThunk<PostItem[], number>(
 		const normalizedItems = rawItems
 			.filter((item: unknown) => typeof item === "object" && item !== null)
 			.map((item: unknown) => normalizePost(item as Record<string, unknown>))
-			.filter((post: PostItem) => post.id);
+			.filter((post: IPostItem) => post.id);
 
 		return normalizedItems;
 	},
 );
 
-export const fetchLastVisitedPosts = createAsyncThunk<PostItem[], number>(
+export const fetchLastVisitedPosts = createAsyncThunk<IPostItem[], number>(
 	"posts/fetchLastVisited",
 	async (limit = 10) => {
 		const { data } = await api.get(`${POSTS_ENDPOINT}/last-visited`, {
@@ -86,13 +86,13 @@ export const fetchLastVisitedPosts = createAsyncThunk<PostItem[], number>(
 		const normalizedItems = rawItems
 			.filter((item: unknown) => typeof item === "object" && item !== null)
 			.map((item: unknown) => normalizePost(item as Record<string, unknown>))
-			.filter((post: PostItem) => post.id);
+			.filter((post: IPostItem) => post.id);
 
 		return normalizedItems;
 	},
 );
 
-export const fetchPostById = createAsyncThunk<PostItem, string>(
+export const fetchPostById = createAsyncThunk<IPostItem, string>(
 	"posts/fetchPostById",
 	async (postId) => {
 		const { data } = await api.get(`${POSTS_ENDPOINT}/${postId}`);
@@ -105,23 +105,17 @@ export const fetchPostById = createAsyncThunk<PostItem, string>(
 	},
 );
 
-export const likePost = createAsyncThunk<string, string>(
-	"posts/likePost",
-	async (postId) => {
-		await api.post(`${POSTS_ENDPOINT}/${postId}/like`);
-		return postId;
-	},
-);
+export const likePost = createAsyncThunk<string, string>("posts/likePost", async (postId) => {
+	await api.post(`${POSTS_ENDPOINT}/${postId}/like`);
+	return postId;
+});
 
-export const unlikePost = createAsyncThunk<string, string>(
-	"posts/unlikePost",
-	async (postId) => {
-		await api.post(`${POSTS_ENDPOINT}/${postId}/unlike`);
-		return postId;
-	},
-);
+export const unlikePost = createAsyncThunk<string, string>("posts/unlikePost", async (postId) => {
+	await api.post(`${POSTS_ENDPOINT}/${postId}/unlike`);
+	return postId;
+});
 
-const normalizePost = (raw: Record<string, unknown>): PostItem => ({
+const normalizePost = (raw: Record<string, unknown>): IPostItem => ({
 	id: String(raw.id ?? raw._id ?? ""),
 	title: typeof raw.title === "string" ? raw.title : undefined,
 	content: typeof raw.content === "string" ? raw.content : "",
@@ -129,7 +123,11 @@ const normalizePost = (raw: Record<string, unknown>): PostItem => ({
 	author:
 		typeof raw.author === "object" && raw.author !== null
 			? {
-					id: String((raw.author as Record<string, unknown>).id ?? (raw.author as Record<string, unknown>)._id ?? ""),
+					id: String(
+						(raw.author as Record<string, unknown>).id ??
+							(raw.author as Record<string, unknown>)._id ??
+							"",
+					),
 					username:
 						typeof (raw.author as Record<string, unknown>).username === "string"
 							? String((raw.author as Record<string, unknown>).username)
@@ -138,7 +136,6 @@ const normalizePost = (raw: Record<string, unknown>): PostItem => ({
 			: undefined,
 	likesCount: typeof raw.likesCount === "number" ? raw.likesCount : undefined,
 	viewsCount: typeof raw.viewsCount === "number" ? raw.viewsCount : undefined,
-	commentsCount:
-		typeof raw.commentsCount === "number" ? raw.commentsCount : undefined,
+	commentsCount: typeof raw.commentsCount === "number" ? raw.commentsCount : undefined,
 	isLiked: typeof raw.isLiked === "boolean" ? raw.isLiked : undefined,
 });

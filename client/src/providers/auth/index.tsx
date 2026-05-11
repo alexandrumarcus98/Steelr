@@ -1,118 +1,115 @@
-import React, {
-	createContext,
-	useContext,
-	useState,
-	useEffect,
-	ReactNode,
-} from "react";
+import React, { createContext, ReactNode, useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import {
+	clearAuth,
+	generateOTPThunk,
+	loginThunk,
+	logoutThunk,
+	setTokens,
+	setUser,
+	verifyOTPThunk,
+} from "@/store/slices/authSlice";
 import api, { setAuthToken } from "@/lib/api";
+import { normalizeApiError } from "@/lib/apiError";
 
-interface User {
-	id: string;
-	username: string;
-	email: string;
-	roles: string[];
-	isActive: boolean;
-	isVerified: boolean;
+import { IUser } from "@/store/types/auth";
+interface ILoginResult {
+	requiresOTP: boolean;
+	message: string;
+	tempEmail?: string;
+	expiresAt?: string | number;
 }
 
-interface AuthContextType {
-	user: User | null;
+interface IOTPResult {
+	message: string;
+	reused?: boolean;
+	expiresAt?: string | number;
+}
+
+interface IAuthContextType {
+	user: IUser | null;
 	token: string | null;
 	isAuthenticated: boolean;
 	loading: boolean;
-	register: (data: {
-		username: string;
-		email: string;
-		password: string;
-	}) => Promise<void>;
-	login: (data: { email: string; password: string }) => Promise<void>; // Placeholder until backend adds login
-	logout: () => void;
+	register: (data: { username: string; email: string; password: string }) => Promise<void>;
+	login: (data: { email: string; password: string }) => Promise<ILoginResult>;
+	logout: () => Promise<void>;
+	generateOTP: (email: string) => Promise<IOTPResult>;
+	verifyOTP: (email: string, otp: string) => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AuthContext = createContext<IAuthContextType | undefined>(undefined);
 
-export const useAuth = () => {
-	const context = useContext(AuthContext);
-	if (!context) throw new Error("useAuth must be used within AuthProvider");
-	return context;
-};
-
-interface AuthProviderProps {
-	children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-	const [user, setUser] = useState<User | null>(null);
-	const [token, setTokenState] = useState<string | null>(
-		localStorage.getItem("authToken"),
-	);
-	const [loading, setLoading] = useState(true);
-
-	const isAuthenticated = !!token && !!user;
+export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+	const dispatch = useAppDispatch();
+	const { user, accessToken, isAuthenticated, loading } = useAppSelector((state) => state.auth);
 
 	useEffect(() => {
-		const initAuth = async () => {
-			if (token) {
-				setAuthToken(token);
-				try {
-					const { data } = await api.get("/auth/me");
-					setUser(data.user);
-				} catch (error) {
-					// Token invalid, clear it
-					setTokenState(null);
-					localStorage.removeItem("authToken");
-					setAuthToken(null);
-				}
-			}
-			setLoading(false);
-		};
-		initAuth();
-	}, [token]);
+		setAuthToken(accessToken);
+	}, [accessToken]);
 
-	const register = async (data: {
-		username: string;
-		email: string;
-		password: string;
-	}) => {
-		const { data: response } = await api.post("/auth/register", data);
-		const token = response.accessToken;
-		setTokenState(token);
-		localStorage.setItem("authToken", token);
-		setAuthToken(token);
-		setUser(response.user);
+	useEffect(() => {
+		if (!accessToken || user) return;
+
+		const bootstrapSession = async (): Promise<void> => {
+			try {
+				const response = await api.get("/auth/me");
+				dispatch(setUser(response.data.user as IUser));
+			} catch {
+				dispatch(clearAuth());
+			}
+		};
+
+		void bootstrapSession();
+	}, [accessToken, user, dispatch]);
+
+	const register = async (data: { username: string; email: string; password: string }) => {
+		try {
+			const response = await api.post("/auth/register", data);
+			const access = response.data.accessToken as string | undefined;
+			const refresh = (response.data.refreshToken as string | undefined) || "";
+			const registeredUser = response.data.user as IUser | undefined;
+			if (!access || !registeredUser) {
+				throw new Error("Registration failed");
+			}
+			dispatch(setTokens({ accessToken: access, refreshToken: refresh }));
+			dispatch(setUser(registeredUser));
+		} catch (err) {
+			const { message } = normalizeApiError(err, "Registration failed. Please try again.");
+			throw new Error(message);
+		}
 	};
 
 	const login = async (loginData: { email: string; password: string }) => {
-		const { data } = await api.post("/auth/login", loginData);
-		const token = data.accessToken;
-		setTokenState(token);
-		localStorage.setItem("authToken", token);
-		setAuthToken(token);
-		setUser(data.user);
+		return dispatch(loginThunk(loginData)).unwrap() as Promise<ILoginResult>;
 	};
 
 	const logout = async () => {
-		try {
-			await api.post("/auth/logout");
-		} catch (error) {
-			// Ignore logout errors
-		}
-		setTokenState(null);
-		setUser(null);
-		localStorage.removeItem("authToken");
-		setAuthToken(null);
+		await dispatch(logoutThunk()).unwrap();
+		dispatch(clearAuth());
 	};
 
-	const value: AuthContextType = {
+	const generateOTP = async (email: string) => {
+		return dispatch(generateOTPThunk(email)).unwrap() as Promise<IOTPResult>;
+	};
+
+	const verifyOTP = async (email: string, otp: string) => {
+		await dispatch(verifyOTPThunk({ email, otp })).unwrap();
+	};
+
+	const value: IAuthContextType = {
 		user,
-		token,
+		token: accessToken,
 		isAuthenticated,
 		loading,
 		register,
 		login,
 		logout,
+		generateOTP,
+		verifyOTP,
 	};
 
 	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthContext;

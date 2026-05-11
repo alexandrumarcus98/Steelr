@@ -1,10 +1,21 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-import { fetchPosts, fetchMostViewedPosts, fetchLastVisitedPosts, likePost, unlikePost, fetchPostById } from "@/store/api/postsApi";
+import {
+	fetchLastVisitedPosts,
+	fetchMostViewedPosts,
+	fetchPostById,
+	fetchPosts,
+	likePost,
+	unlikePost,
+} from "@/store/api/postsApi";
+import type { IPostItem, IPostSort, IPostsState } from "@/store/types/posts";
 
-import type { PostsState, PostSort } from "@/store/types/posts";
+export const selectPosts = createSelector(
+	[(state: { posts: IPostsState }) => state.posts.items],
+	(items) => items,
+);
 
-export const initialState: PostsState = {
+export const initialState: IPostsState = {
 	items: [],
 	mostViewed: [],
 	lastVisited: [],
@@ -25,7 +36,7 @@ const postsSlice = createSlice({
 	name: "posts",
 	initialState,
 	reducers: {
-		setSort(state, action: PayloadAction<PostSort>) {
+		setSort(state, action: PayloadAction<IPostSort>) {
 			state.sort = action.payload;
 			state.page = 1;
 			state.hasMore = true;
@@ -59,7 +70,7 @@ const postsSlice = createSlice({
 
 				const existingIds = new Set(state.items.map((item) => item.id));
 				const freshItems = action.payload.items.filter(
-					(item) => !existingIds.has(item.id),
+					(item: IPostItem) => !existingIds.has(item.id),
 				);
 				state.items = [...state.items, ...freshItems];
 			})
@@ -100,10 +111,10 @@ const postsSlice = createSlice({
 					post.id !== id
 						? post
 						: {
-							...post,
-							isLiked: true,
-							likesCount: (post.likesCount ?? 0) + 1,
-						}
+								...post,
+								isLiked: true,
+								likesCount: (post.likesCount ?? 0) + 1,
+							},
 				);
 
 				if (state.currentPost && state.currentPost.id === id) {
@@ -121,20 +132,17 @@ const postsSlice = createSlice({
 					post.id !== id
 						? post
 						: {
-							...post,
-							isLiked: false,
-							likesCount: Math.max((post.likesCount ?? 0) - 1, 0),
-						}
+								...post,
+								isLiked: false,
+								likesCount: Math.max((post.likesCount ?? 0) - 1, 0),
+							},
 				);
 
 				if (state.currentPost && state.currentPost.id === id) {
 					state.currentPost = {
 						...state.currentPost,
 						isLiked: false,
-						likesCount: Math.max(
-							(state.currentPost.likesCount ?? 0) - 1,
-							0
-						),
+						likesCount: Math.max((state.currentPost.likesCount ?? 0) - 1, 0),
 					};
 				}
 			})
@@ -158,7 +166,7 @@ const postsSlice = createSlice({
 				state.status = "failed";
 				state.error = action.error.message ?? "Failed to load post";
 				state.currentPost = null;
-			})
+			});
 	},
 });
 

@@ -2,6 +2,8 @@ import { InferSchemaType, Model, Schema, model, models } from "mongoose";
 
 export type UserRole = "user" | "moderator" | "admin";
 
+export type UserLocationSource = "manual" | "signup-ip" | "seed";
+
 const userSchema = new Schema(
 	{
 		username: {
@@ -42,6 +44,43 @@ const userSchema = new Schema(
 			type: Date,
 			default: null,
 		},
+		signupIp: {
+			type: String,
+			trim: true,
+			default: null,
+		},
+		profileLocation: {
+			city: {
+				type: String,
+				trim: true,
+				default: "",
+			},
+			country: {
+				type: String,
+				trim: true,
+				default: "",
+			},
+			region: {
+				type: String,
+				trim: true,
+				default: "",
+			},
+			continent: {
+				type: String,
+				trim: true,
+				default: "",
+			},
+			source: {
+				type: String,
+				enum: ["manual", "signup-ip", "seed"],
+				default: "manual",
+			},
+		},
+		friendIds: {
+			type: [Schema.Types.ObjectId],
+			ref: "User",
+			default: [],
+		},
 		resetPasswordTokenHash: {
 			type: String,
 			select: false,
@@ -58,6 +97,10 @@ const userSchema = new Schema(
 		versionKey: false,
 	}
 );
+
+userSchema.index({ "profileLocation.country": 1, "profileLocation.city": 1 });
+userSchema.index({ "profileLocation.city": "text", "profileLocation.country": "text" });
+userSchema.index({ signupIp: 1 });
 
 userSchema.set("toJSON", {
 	transform: (_doc, ret) => {

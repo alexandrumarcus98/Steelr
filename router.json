@@ -1,0 +1,43 @@
+{
+  "encoder_type": "ollama",
+  "encoder_name": "nomic-embed-text",
+  "ollama_base_url": "http://localhost:11434",
+  "routes": [
+    {
+      "name": "qwen3-coder:30b",
+      "description": "code-tasks",
+      "metadata": {
+        "category": "code"
+      },
+      "utterances": [
+        "Write a Python script to",
+        "Fix this bug in my React app",
+        "Refactor this function to be more efficient"
+      ]
+    },
+    {
+      "name": "nvidia/nemotron-3-super-120b-a12b",
+      "description": "complex-reasoning",
+      "metadata": {
+        "category": "reasoning"
+      },
+      "utterances": [
+        "Think step by step to solve this",
+        "Design a microservice architecture for",
+        "Analyze the system performance bottlenecks"
+      ]
+    },
+    {
+      "name": "llama3.1:8b",
+      "description": "general-chat",
+      "metadata": {
+        "category": "general"
+      },
+      "utterances": [
+        "Write a professional email to my boss",
+        "Summarize this README file",
+        "How do I install Docker on Ubuntu?"
+      ]
+    }
+  ]
+}

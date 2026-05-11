@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { fetchDashboardStats } from "@/store/api/dashboardApi";
-
 import type { DashboardState } from "@/store/types/dashboard";
 
 const initialState: DashboardState = {

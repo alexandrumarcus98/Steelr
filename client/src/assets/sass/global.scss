@@ -1,0 +1,11 @@
+@use "base/fonts";
+@use "base/variables";
+@use "base/default";
+
+@use "shared/header";
+@use "shared/footer";
+@use "shared/animations";
+@use "shared/media";
+
+@use "components/home";
+@use "components/dashboard";

@@ -1,6 +1,8 @@
 import React from "react";
+
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuth } from "@/providers/auth";
+
+import { useAuth } from "@/hooks/useAuth";
 
 const RequireAuth: React.FC = () => {
 	const { isAuthenticated, loading } = useAuth();
@@ -8,7 +10,7 @@ const RequireAuth: React.FC = () => {
 
 	if (loading) {
 		return (
-			<div className="flex min-h-[50vh] items-center justify-center text-sm text-gray-500">
+			<div className="flex min-h-[50vh] items-center justify-center text-sm text-slate-500">
 				Checking session...
 			</div>
 		);

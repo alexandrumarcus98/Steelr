@@ -1,0 +1,53 @@
+.
+├── __mocks__
+│   └── fileMock.js
+├── src
+│   ├── assets
+│   │   ├── css
+│   │   └── sass
+│   ├── components
+│   │   ├── auth
+│   │   ├── posts
+│   │   ├── users
+│   │   └── PageHeader.tsx
+│   ├── lib
+│   │   ├── api.ts
+│   │   ├── authEndpoints.ts
+│   │   └── postsEndpoints.ts
+│   ├── pages
+│   │   ├── dashboard
+│   │   ├── feed
+│   │   ├── login
+│   │   ├── post
+│   │   ├── recover-password
+│   │   ├── register
+│   │   ├── reset-password
+│   │   └── user
+│   ├── providers
+│   │   ├── auth
+│   │   └── layouts
+│   ├── store
+│   │   ├── api
+│   │   ├── slices
+│   │   ├── types
+│   │   ├── hooks.ts
+│   │   └── index.ts
+│   ├── App.tsx
+│   ├── global.d.ts
+│   └── main.tsx
+├── CLAUDE.md
+├── custom.css.ts
+├── Dockerfile
+├── index.html
+├── jest.config.cjs
+├── package.json
+├── package-lock.json
+├── pnpm-lock.yaml
+├── prettier.json
+├── project_structure.txt
+├── README.md
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+
+27 directories, 24 files

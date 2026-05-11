@@ -1,0 +1,1009 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Color Preview — 121212 / FFFFFA / FF312E</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300..700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			/* ─── TOKENS ─── */
+			:root,
+			[data-theme="dark"] {
+				--bg: #121212;
+				--surface: #1a1a1a;
+				--surface-2: #222222;
+				--surface-3: #2a2a2a;
+				--border: rgba(255, 255, 250, 0.08);
+				--text: #fffffa;
+				--text-muted: rgba(255, 255, 250, 0.55);
+				--text-faint: rgba(255, 255, 250, 0.25);
+				--accent: #ff312e;
+				--accent-dim: rgba(255, 49, 46, 0.12);
+				--accent-hover: #ff5654;
+
+				--font-display: "Instrument Serif", Georgia, serif;
+				--font-body: "DM Sans", "Helvetica Neue", sans-serif;
+
+				--text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+				--text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+				--text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+				--text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+				--text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+				--text-2xl: clamp(2rem, 1.2rem + 2.5vw, 3.5rem);
+				--text-3xl: clamp(2.5rem, 1rem + 4vw, 5rem);
+
+				--space-1: 0.25rem;
+				--space-2: 0.5rem;
+				--space-3: 0.75rem;
+				--space-4: 1rem;
+				--space-6: 1.5rem;
+				--space-8: 2rem;
+				--space-10: 2.5rem;
+				--space-12: 3rem;
+				--space-16: 4rem;
+				--space-20: 5rem;
+
+				--radius-sm: 0.25rem;
+				--radius-md: 0.5rem;
+				--radius-lg: 0.75rem;
+				--radius-xl: 1.25rem;
+				--radius-full: 9999px;
+
+				--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+				--shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+				--shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+				--trans: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+			}
+
+			[data-theme="light"] {
+				--bg: #fffffa;
+				--surface: #f5f5ef;
+				--surface-2: #eeeee8;
+				--surface-3: #e5e5df;
+				--border: rgba(18, 18, 18, 0.1);
+				--text: #121212;
+				--text-muted: rgba(18, 18, 18, 0.5);
+				--text-faint: rgba(18, 18, 18, 0.22);
+				--accent: #ff312e;
+				--accent-dim: rgba(255, 49, 46, 0.09);
+				--accent-hover: #d42220;
+				--shadow-sm: 0 1px 3px rgba(18, 18, 18, 0.07);
+				--shadow-md: 0 4px 16px rgba(18, 18, 18, 0.09);
+				--shadow-lg: 0 12px 40px rgba(18, 18, 18, 0.12);
+			}
+
+			/* ─── RESET ─── */
+			*,
+			*::before,
+			*::after {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+			}
+			html {
+				-webkit-font-smoothing: antialiased;
+				scroll-behavior: smooth;
+			}
+			body {
+				min-height: 100dvh;
+				font-family: var(--font-body);
+				font-size: var(--text-base);
+				color: var(--text);
+				background: var(--bg);
+				transition:
+					background var(--trans),
+					color var(--trans);
+			}
+			img {
+				display: block;
+				max-width: 100%;
+			}
+			button {
+				cursor: pointer;
+				background: none;
+				border: none;
+				font: inherit;
+				color: inherit;
+			}
+			a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			/* ─── LAYOUT ─── */
+			.container {
+				max-width: 1100px;
+				margin-inline: auto;
+				padding-inline: var(--space-6);
+			}
+
+			/* ─── HEADER / NAV ─── */
+			header {
+				position: sticky;
+				top: 0;
+				z-index: 100;
+				background: var(--bg);
+				border-bottom: 1px solid var(--border);
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+			}
+			nav {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				padding-block: var(--space-4);
+			}
+			.logo {
+				display: flex;
+				align-items: center;
+				gap: var(--space-2);
+				font-family: var(--font-display);
+				font-size: var(--text-lg);
+				letter-spacing: -0.02em;
+			}
+			.logo-dot {
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: var(--accent);
+				box-shadow: 0 0 10px rgba(255, 49, 46, 0.6);
+			}
+			.nav-links {
+				display: flex;
+				align-items: center;
+				gap: var(--space-8);
+			}
+			.nav-links a {
+				font-size: var(--text-sm);
+				color: var(--text-muted);
+				transition: color var(--trans);
+			}
+			.nav-links a:hover {
+				color: var(--text);
+			}
+			.nav-right {
+				display: flex;
+				align-items: center;
+				gap: var(--space-4);
+			}
+			.btn {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-2);
+				padding: 0.5rem 1.25rem;
+				border-radius: var(--radius-full);
+				font-size: var(--text-sm);
+				font-weight: 500;
+				transition: all var(--trans);
+				cursor: pointer;
+			}
+			.btn-primary {
+				background: var(--accent);
+				color: #fffffa;
+				box-shadow: 0 2px 12px rgba(255, 49, 46, 0.3);
+			}
+			.btn-primary:hover {
+				background: var(--accent-hover);
+				box-shadow: 0 4px 20px rgba(255, 49, 46, 0.45);
+				transform: translateY(-1px);
+			}
+			.btn-ghost {
+				border: 1px solid var(--border);
+				color: var(--text-muted);
+				background: transparent;
+			}
+			.btn-ghost:hover {
+				color: var(--text);
+				border-color: rgba(255, 255, 250, 0.2);
+			}
+			.theme-toggle {
+				width: 36px;
+				height: 36px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: var(--radius-md);
+				color: var(--text-muted);
+				transition:
+					color var(--trans),
+					background var(--trans);
+			}
+			.theme-toggle:hover {
+				color: var(--text);
+				background: var(--surface);
+			}
+
+			/* ─── HERO ─── */
+			.hero {
+				padding-block: clamp(var(--space-16), 10vw, 120px);
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: var(--space-12);
+				align-items: center;
+			}
+			.hero-label {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-2);
+				font-size: var(--text-xs);
+				text-transform: uppercase;
+				letter-spacing: 0.12em;
+				color: var(--accent);
+				font-weight: 600;
+				margin-bottom: var(--space-6);
+			}
+			.hero-label::before {
+				content: "";
+				display: block;
+				width: 20px;
+				height: 2px;
+				background: var(--accent);
+				border-radius: 2px;
+			}
+			.hero h1 {
+				font-family: var(--font-display);
+				font-size: var(--text-3xl);
+				line-height: 1.05;
+				letter-spacing: -0.03em;
+				margin-bottom: var(--space-6);
+			}
+			.hero h1 em {
+				font-style: italic;
+				color: var(--accent);
+			}
+			.hero p {
+				font-size: var(--text-lg);
+				color: var(--text-muted);
+				line-height: 1.6;
+				max-width: 44ch;
+				margin-bottom: var(--space-8);
+			}
+			.hero-actions {
+				display: flex;
+				gap: var(--space-4);
+				align-items: center;
+			}
+			.hero-note {
+				font-size: var(--text-xs);
+				color: var(--text-faint);
+			}
+
+			/* Hero visual */
+			.hero-visual {
+				position: relative;
+				aspect-ratio: 4/3;
+			}
+			.hero-card {
+				position: absolute;
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: var(--radius-xl);
+				box-shadow: var(--shadow-lg);
+				padding: var(--space-6);
+			}
+			.hero-card-main {
+				inset: 0;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+			.card-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-2);
+				background: var(--accent-dim);
+				border: 1px solid rgba(255, 49, 46, 0.2);
+				padding: var(--space-1) var(--space-3);
+				border-radius: var(--radius-full);
+				font-size: var(--text-xs);
+				color: var(--accent);
+				font-weight: 500;
+				width: fit-content;
+				margin-bottom: var(--space-4);
+			}
+			.card-stat {
+				display: flex;
+				flex-direction: column;
+				gap: var(--space-1);
+			}
+			.stat-value {
+				font-family: var(--font-display);
+				font-size: var(--text-2xl);
+				font-weight: 400;
+				line-height: 1;
+				letter-spacing: -0.02em;
+			}
+			.stat-value span {
+				color: var(--accent);
+			}
+			.stat-label {
+				font-size: var(--text-xs);
+				color: var(--text-muted);
+			}
+			.mini-chart {
+				display: flex;
+				align-items: flex-end;
+				gap: 4px;
+				height: 50px;
+				margin-top: var(--space-4);
+			}
+			.bar {
+				flex: 1;
+				border-radius: 3px 3px 0 0;
+				background: var(--surface-3);
+				transition: background var(--trans);
+			}
+			.bar.active {
+				background: var(--accent);
+			}
+			.bar.semi {
+				background: rgba(255, 49, 46, 0.4);
+			}
+			.floating-tag {
+				position: absolute;
+				background: var(--accent);
+				color: #fffffa;
+				padding: var(--space-2) var(--space-4);
+				border-radius: var(--radius-lg);
+				font-size: var(--text-xs);
+				font-weight: 600;
+				box-shadow: 0 4px 20px rgba(255, 49, 46, 0.4);
+			}
+			.tag-1 {
+				top: -14px;
+				right: 20%;
+			}
+			.tag-2 {
+				bottom: -14px;
+				left: 20%;
+			}
+
+			/* ─── SECTION LABEL ─── */
+			.section-label {
+				font-size: var(--text-xs);
+				text-transform: uppercase;
+				letter-spacing: 0.12em;
+				color: var(--text-faint);
+				font-weight: 500;
+				margin-bottom: var(--space-4);
+			}
+
+			/* ─── FEATURES ─── */
+			.features {
+				padding-block: clamp(var(--space-16), 8vw, 96px);
+				border-top: 1px solid var(--border);
+			}
+			.features-header {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: var(--space-12);
+				align-items: end;
+				margin-bottom: var(--space-12);
+			}
+			.features-header h2 {
+				font-family: var(--font-display);
+				font-size: var(--text-2xl);
+				letter-spacing: -0.025em;
+				line-height: 1.1;
+			}
+			.features-header p {
+				color: var(--text-muted);
+				line-height: 1.7;
+				max-width: 40ch;
+			}
+			.features-grid {
+				display: grid;
+				grid-template-columns: 2fr 1fr 1fr;
+				grid-template-rows: auto auto;
+				gap: var(--space-4);
+			}
+			.feat-card {
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: var(--radius-xl);
+				padding: var(--space-8);
+				transition:
+					box-shadow var(--trans),
+					transform var(--trans);
+			}
+			.feat-card:hover {
+				box-shadow: var(--shadow-md);
+				transform: translateY(-2px);
+			}
+			.feat-card.large {
+				grid-row: 1 / 3;
+				display: flex;
+				flex-direction: column;
+				justify-content: space-between;
+			}
+			.feat-icon {
+				width: 40px;
+				height: 40px;
+				border-radius: var(--radius-md);
+				background: var(--accent-dim);
+				border: 1px solid rgba(255, 49, 46, 0.15);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				margin-bottom: var(--space-6);
+				color: var(--accent);
+			}
+			.feat-icon svg {
+				width: 18px;
+				height: 18px;
+			}
+			.feat-card h3 {
+				font-size: var(--text-lg);
+				font-weight: 600;
+				letter-spacing: -0.01em;
+				margin-bottom: var(--space-3);
+			}
+			.feat-card p {
+				font-size: var(--text-sm);
+				color: var(--text-muted);
+				line-height: 1.65;
+			}
+			.feat-number {
+				font-family: var(--font-display);
+				font-size: var(--text-3xl);
+				color: var(--accent);
+				line-height: 1;
+				letter-spacing: -0.03em;
+				margin-top: var(--space-8);
+			}
+			.feat-number-label {
+				font-size: var(--text-xs);
+				color: var(--text-muted);
+				margin-top: var(--space-2);
+			}
+
+			/* ─── TESTIMONIAL ─── */
+			.testimonial-section {
+				padding-block: clamp(var(--space-16), 8vw, 96px);
+				border-top: 1px solid var(--border);
+			}
+			.testimonial-grid {
+				display: grid;
+				grid-template-columns: 1fr 1fr 1fr;
+				gap: var(--space-4);
+			}
+			.testimonial-card {
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: var(--radius-xl);
+				padding: var(--space-8);
+			}
+			.testimonial-card.featured {
+				background: var(--accent);
+				border-color: var(--accent);
+			}
+			.stars {
+				display: flex;
+				gap: 2px;
+				margin-bottom: var(--space-4);
+			}
+			.star {
+				color: #fffffa;
+				opacity: 0.9;
+				font-size: 12px;
+			}
+			.testimonial-card.featured .stars .star {
+				color: #fffffa;
+				opacity: 1;
+			}
+			.testimonial-card:not(.featured) .star {
+				color: var(--accent);
+				opacity: 1;
+			}
+			.quote {
+				font-size: var(--text-base);
+				line-height: 1.7;
+				color: var(--text-muted);
+				margin-bottom: var(--space-6);
+			}
+			.testimonial-card.featured .quote {
+				color: rgba(255, 255, 250, 0.85);
+			}
+			.author {
+				display: flex;
+				align-items: center;
+				gap: var(--space-3);
+			}
+			.avatar {
+				width: 36px;
+				height: 36px;
+				border-radius: 50%;
+				background: var(--surface-3);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				font-size: var(--text-xs);
+				font-weight: 700;
+				color: var(--text-muted);
+				flex-shrink: 0;
+			}
+			.testimonial-card.featured .avatar {
+				background: rgba(255, 255, 250, 0.2);
+				color: #fffffa;
+			}
+			.author-name {
+				font-size: var(--text-sm);
+				font-weight: 600;
+			}
+			.testimonial-card.featured .author-name {
+				color: #fffffa;
+			}
+			.author-role {
+				font-size: var(--text-xs);
+				color: var(--text-muted);
+			}
+			.testimonial-card.featured .author-role {
+				color: rgba(255, 255, 250, 0.6);
+			}
+
+			/* ─── CTA ─── */
+			.cta-section {
+				padding-block: clamp(var(--space-16), 8vw, 96px);
+			}
+			.cta-inner {
+				background: var(--surface);
+				border: 1px solid var(--border);
+				border-radius: var(--radius-xl);
+				padding: clamp(var(--space-12), 6vw, var(--space-20));
+				display: grid;
+				grid-template-columns: 1fr auto;
+				gap: var(--space-8);
+				align-items: center;
+				position: relative;
+				overflow: hidden;
+			}
+			.cta-inner::before {
+				content: "";
+				position: absolute;
+				width: 400px;
+				height: 400px;
+				background: radial-gradient(circle, rgba(255, 49, 46, 0.12) 0%, transparent 70%);
+				right: -100px;
+				top: 50%;
+				transform: translateY(-50%);
+				pointer-events: none;
+			}
+			.cta-inner h2 {
+				font-family: var(--font-display);
+				font-size: var(--text-2xl);
+				letter-spacing: -0.025em;
+				line-height: 1.1;
+				margin-bottom: var(--space-4);
+			}
+			.cta-inner p {
+				color: var(--text-muted);
+				max-width: 48ch;
+				line-height: 1.6;
+			}
+			.cta-actions {
+				display: flex;
+				gap: var(--space-3);
+				flex-shrink: 0;
+			}
+
+			/* ─── FOOTER ─── */
+			footer {
+				border-top: 1px solid var(--border);
+				padding-block: var(--space-10);
+			}
+			.footer-inner {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+			.footer-links {
+				display: flex;
+				gap: var(--space-6);
+			}
+			.footer-links a {
+				font-size: var(--text-sm);
+				color: var(--text-faint);
+				transition: color var(--trans);
+			}
+			.footer-links a:hover {
+				color: var(--text-muted);
+			}
+			.footer-copy {
+				font-size: var(--text-xs);
+				color: var(--text-faint);
+			}
+
+			/* ─── COLOR SWATCH BANNER ─── */
+			.swatch-banner {
+				display: flex;
+				height: 6px;
+				border-radius: var(--radius-full);
+				overflow: hidden;
+				margin-bottom: var(--space-6);
+				width: 120px;
+			}
+			.sw-dark {
+				flex: 1;
+				background: #121212;
+			}
+			.sw-light {
+				flex: 1;
+				background: #fffffa;
+				border: 1px solid var(--border);
+			}
+			.sw-red {
+				flex: 1;
+				background: #ff312e;
+			}
+
+			/* ─── MODE INDICATOR ─── */
+			.mode-pill {
+				display: inline-flex;
+				align-items: center;
+				gap: var(--space-2);
+				background: var(--surface);
+				border: 1px solid var(--border);
+				padding: var(--space-1) var(--space-3);
+				border-radius: var(--radius-full);
+				font-size: var(--text-xs);
+				color: var(--text-muted);
+				margin-bottom: var(--space-8);
+			}
+			.mode-dot {
+				width: 6px;
+				height: 6px;
+				border-radius: 50%;
+				background: var(--accent);
+			}
+
+			@media (max-width: 768px) {
+				.hero,
+				.features-header,
+				.testimonial-grid {
+					grid-template-columns: 1fr;
+				}
+				.features-grid {
+					grid-template-columns: 1fr;
+				}
+				.feat-card.large {
+					grid-row: auto;
+				}
+				.hero-visual {
+					display: none;
+				}
+				.cta-inner {
+					grid-template-columns: 1fr;
+				}
+				.nav-links {
+					display: none;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<!-- HEADER -->
+		<header>
+			<nav class="container">
+				<div class="logo">
+					<div class="logo-dot"></div>
+					Forma
+				</div>
+				<div class="nav-links">
+					<a href="#">Product</a>
+					<a href="#">Pricing</a>
+					<a href="#">Blog</a>
+					<a href="#">About</a>
+				</div>
+				<div class="nav-right">
+					<button class="theme-toggle" data-theme-toggle aria-label="Switch to light mode">
+						<svg
+							width="18"
+							height="18"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+						>
+							<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+						</svg>
+					</button>
+					<a href="#" class="btn btn-ghost">Sign in</a>
+					<a href="#" class="btn btn-primary">Get started</a>
+				</div>
+			</nav>
+		</header>
+
+		<!-- HERO -->
+		<main>
+			<section class="container">
+				<div class="hero">
+					<div class="hero-content">
+						<div class="swatch-banner">
+							<div class="sw-dark"></div>
+							<div class="sw-light"></div>
+							<div class="sw-red"></div>
+						</div>
+						<div class="hero-label">New platform — 2026</div>
+						<h1>Design that <em>moves</em> with intent</h1>
+						<p>
+							A minimal foundation built on three tones. Deep black, warm white, and a single
+							razor-sharp red — nothing more, nothing less.
+						</p>
+						<div class="hero-actions">
+							<a href="#" class="btn btn-primary">Start building →</a>
+							<a href="#" class="btn btn-ghost">View examples</a>
+						</div>
+						<p class="hero-note" style="margin-top: var(--space-4)">
+							No credit card required · Free for 14 days
+						</p>
+					</div>
+
+					<!-- Hero visual card -->
+					<div class="hero-visual">
+						<div class="hero-card hero-card-main">
+							<div>
+								<div class="card-badge">
+									<svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+										<circle cx="4" cy="4" r="4" />
+									</svg>
+									Live metrics
+								</div>
+								<div class="card-stat">
+									<div class="stat-value"><span>94.2</span>%</div>
+									<div class="stat-label">Conversion rate this week</div>
+								</div>
+								<div class="mini-chart">
+									<div class="bar" style="height: 35%"></div>
+									<div class="bar" style="height: 55%"></div>
+									<div class="bar semi" style="height: 45%"></div>
+									<div class="bar semi" style="height: 70%"></div>
+									<div class="bar active" style="height: 85%"></div>
+									<div class="bar active" style="height: 100%"></div>
+									<div class="bar active" style="height: 90%"></div>
+								</div>
+							</div>
+							<div
+								style="
+									display: flex;
+									align-items: center;
+									justify-content: space-between;
+									margin-top: var(--space-6);
+									padding-top: var(--space-4);
+									border-top: 1px solid var(--border);
+								"
+							>
+								<span style="font-size: var(--text-xs); color: var(--text-faint)"
+									>Last updated 2m ago</span
+								>
+								<span style="font-size: var(--text-xs); color: var(--accent); font-weight: 600"
+									>↑ 12.4%</span
+								>
+							</div>
+						</div>
+						<div class="floating-tag tag-1">+12.4% this week</div>
+						<div class="floating-tag tag-2">94.2% conversion</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- FEATURES -->
+			<section class="features">
+				<div class="container">
+					<div class="features-header">
+						<div>
+							<div class="section-label">Why Forma</div>
+							<h2>A disciplined palette.<br />Unlimited expression.</h2>
+						</div>
+						<p>
+							Three colors carry more weight than thirty. Constraint forces clarity — every pixel
+							earns its place when you have nothing to hide behind.
+						</p>
+					</div>
+
+					<div class="features-grid">
+						<!-- Large card -->
+						<div class="feat-card large">
+							<div>
+								<div class="feat-icon">
+									<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+										<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+									</svg>
+								</div>
+								<h3>Layered depth system</h3>
+								<p>
+									Surface elevation through four tonal stops — no drop shadows needed. Each layer is
+									a deliberate step up from the page baseline.
+								</p>
+							</div>
+							<div>
+								<div class="feat-number">04</div>
+								<div class="feat-number-label">Surface layers</div>
+							</div>
+						</div>
+
+						<!-- Small cards -->
+						<div class="feat-card">
+							<div class="feat-icon">
+								<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+									<circle cx="12" cy="12" r="10" />
+									<path d="M12 6v6l4 2" />
+								</svg>
+							</div>
+							<h3>Fast by default</h3>
+							<p style="font-size: var(--text-xs)">Zero unused tokens shipped to the browser.</p>
+						</div>
+						<div class="feat-card">
+							<div class="feat-icon">
+								<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+									<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+								</svg>
+							</div>
+							<h3>AA accessible</h3>
+							<p style="font-size: var(--text-xs)">Every combination passes WCAG 4.5:1 contrast.</p>
+						</div>
+						<div class="feat-card">
+							<div class="feat-icon">
+								<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+									<circle cx="12" cy="12" r="3" />
+									<path
+										d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"
+									/>
+								</svg>
+							</div>
+							<h3>Light & dark</h3>
+							<p style="font-size: var(--text-xs)">Both modes ship together — no retrofitting.</p>
+						</div>
+						<div class="feat-card">
+							<div class="feat-icon">
+								<svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+									<rect x="5" y="2" width="14" height="20" rx="2" />
+									<path d="M9 22v-4h6v4M9 6h6M9 10h6" />
+								</svg>
+							</div>
+							<h3>Responsive tokens</h3>
+							<p style="font-size: var(--text-xs)">Fluid clamp() type and spacing throughout.</p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- TESTIMONIALS -->
+			<section class="testimonial-section">
+				<div class="container">
+					<div class="section-label" style="margin-bottom: var(--space-10)">What designers say</div>
+					<div class="testimonial-grid">
+						<div class="testimonial-card">
+							<div class="stars">
+								<span class="star">★</span><span class="star">★</span><span class="star">★</span
+								><span class="star">★</span><span class="star">★</span>
+							</div>
+							<p class="quote">
+								"I've been looking for a palette this restrained for years. The red accent does
+								exactly what a good accent should — it directs attention without screaming."
+							</p>
+							<div class="author">
+								<div class="avatar">AB</div>
+								<div>
+									<div class="author-name">Alina B.</div>
+									<div class="author-role">Lead Designer, Vercel</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="testimonial-card featured">
+							<div class="stars">
+								<span class="star">★</span><span class="star">★</span><span class="star">★</span
+								><span class="star">★</span><span class="star">★</span>
+							</div>
+							<p class="quote">
+								"Three colors is a constraint that liberates. Every decision becomes obvious when
+								you can't reach for another hue as a crutch."
+							</p>
+							<div class="author">
+								<div class="avatar">MK</div>
+								<div>
+									<div class="author-name">Marcus K.</div>
+									<div class="author-role">Principal Engineer, Linear</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="testimonial-card">
+							<div class="stars">
+								<span class="star">★</span><span class="star">★</span><span class="star">★</span
+								><span class="star">★</span><span class="star">★</span>
+							</div>
+							<p class="quote">
+								"The dark mode is the real hero here — that near-black #121212 paired with the warm
+								off-white creates a warmth most dark themes completely miss."
+							</p>
+							<div class="author">
+								<div class="avatar">YT</div>
+								<div>
+									<div class="author-name">Yuki T.</div>
+									<div class="author-role">Creative Director, Framer</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- CTA -->
+			<section class="cta-section">
+				<div class="container">
+					<div class="cta-inner">
+						<div>
+							<div class="mode-pill">
+								<div class="mode-dot"></div>
+								Ready to ship
+							</div>
+							<h2>Start with three.<br />Build everything.</h2>
+							<p>
+								Join thousands of designers who found that radical constraint is the fastest path to
+								a distinctive visual identity.
+							</p>
+						</div>
+						<div class="cta-actions">
+							<a href="#" class="btn btn-primary">Get started free</a>
+							<a href="#" class="btn btn-ghost">See pricing</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+
+		<!-- FOOTER -->
+		<footer>
+			<div class="container">
+				<div class="footer-inner">
+					<div class="logo" style="font-size: var(--text-base)">
+						<div class="logo-dot"></div>
+						Forma
+					</div>
+					<div class="footer-links">
+						<a href="#">Privacy</a>
+						<a href="#">Terms</a>
+						<a href="#">Docs</a>
+						<a href="#">GitHub</a>
+					</div>
+					<div class="footer-copy">© 2026 Forma. All rights reserved.</div>
+				</div>
+			</div>
+		</footer>
+
+		<script>
+			(function () {
+				const toggle = document.querySelector("[data-theme-toggle]");
+				const root = document.documentElement;
+				let theme = "dark";
+				root.setAttribute("data-theme", theme);
+
+				function updateIcon() {
+					toggle.innerHTML =
+						theme === "dark"
+							? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+							: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+					toggle.setAttribute(
+						"aria-label",
+						"Switch to " + (theme === "dark" ? "light" : "dark") + " mode",
+					);
+				}
+
+				toggle &&
+					toggle.addEventListener("click", () => {
+						theme = theme === "dark" ? "light" : "dark";
+						root.setAttribute("data-theme", theme);
+						updateIcon();
+					});
+
+				updateIcon();
+			})();
+		</script>
+	</body>
+</html>
