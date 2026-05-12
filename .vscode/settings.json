@@ -1,0 +1,71 @@
+{
+  // ── Copilot ──────────────────────────────────────────────────
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false
+  },
+  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
+  "chat.instructionsFilesLocations": {
+    ".github/instructions": true
+  },
+  "chat.promptFilesLocations": {
+    ".github/prompts": true
+  },
+  "chat.includeApplyingInstructions": true,
+  "github.copilot.chat.localeOverride": "en",
+  "github.copilot.chat.terminalChatLocation": "chatView",
+  "chat.checkpoints.enabled": true,
+  "github.copilot.editor.enableCodeActions": true,
+  "github.copilot.renameSuggestions.triggerAutomatically": true,
+
+  // ── Editor ────────────────────────────────────────────────────
+  "editor.tabSize": 2,
+  "editor.insertSpaces": false,
+  "editor.detectIndentation": false,
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "editor.formatOnType": false,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "editor.rulers": [100, 120],
+  "editor.wordWrap": "on",
+  "editor.inlineSuggest.syntaxHighlightingEnabled": true,
+  "editor.inlineSuggest.showToolbar": "onHover",
+  "editor.inlineSuggest.minShowDelay": 0,
+
+  // ── Files ─────────────────────────────────────────────────────
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/coverage": true
+  },
+
+  // ── ESLint ────────────────────────────────────────────────────
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.packageManager": "pnpm",
+  "eslint.workingDirectories": ["client", "server"],
+  "eslint.useFlatConfig": true,
+
+  // ── Prettier ──────────────────────────────────────────────────
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": true,
+
+  // ── TypeScript ────────────────────────────────────────────────
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "typescript.inlayHints.parameterNames.enabled": "literals",
+  "typescript.inlayHints.variableTypes.enabled": false
+}

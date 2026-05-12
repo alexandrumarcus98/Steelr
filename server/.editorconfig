@@ -1,17 +1,6 @@
-# EditorConfig is awesome: https://editorconfig.org
+# Inherits from root .editorconfig
+# Override only what differs in the server
 
-# top-most EditorConfig file
-root = true
-
-# Unix-style newlines with a newline ending every file
-[*]
-end_of_line = lf
-insert_final_newline = true
-charset = utf-8
-indent_size = 2
+[*.{ts,js}]
 indent_style = tab
-trim_trailing_whitespace = true
-
-# Windows-style newlines with a carriage return ending every file
-[Makefile]
-end_of_line = crlf
+indent_size = 2
