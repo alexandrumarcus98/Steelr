@@ -13,7 +13,8 @@
   "chat.promptFilesLocations": {
     ".github/prompts": true
   },
-  "chat.includeApplyingInstructions": true,
+  // chat.includeApplyingInstructions was deprecated → replaced by chat.includeReferencedInstructions
+  "chat.includeReferencedInstructions": true,
   "github.copilot.chat.localeOverride": "en",
   "github.copilot.chat.terminalChatLocation": "chatView",
   "chat.checkpoints.enabled": true,
@@ -56,16 +57,21 @@
     "typescriptreact"
   ],
   "eslint.packageManager": "pnpm",
-  "eslint.workingDirectories": ["client", "server"],
-  "eslint.useFlatConfig": true,
+  // { "mode": "auto" } lets ESLint find the nearest config per subdirectory automatically
+  // avoids having to manually list ["client", "server"] (stale-prone)
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  // eslint.useFlatConfig removed — ESLint ≥8.57 auto-detects flat config (eslint.config.*),
+  // no explicit flag needed (was eslint.experimental.useFlatConfig before 3.0.10)
 
   // ── Prettier ──────────────────────────────────────────────────
   "prettier.requireConfig": true,
   "prettier.useEditorConfig": true,
 
-  // ── TypeScript ────────────────────────────────────────────────
-  "typescript.preferences.importModuleSpecifier": "relative",
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "typescript.inlayHints.parameterNames.enabled": "literals",
-  "typescript.inlayHints.variableTypes.enabled": false
+  // ── TypeScript / JavaScript ───────────────────────────────────
+  // typescript.* and javascript.* settings unified under js/ts.* as of VS Code 1.110
+  // Old typescript.* keys still work but are deprecated and will be removed in a future release
+  "js/ts.preferences.importModuleSpecifier": "relative",
+  "js/ts.updateImportsOnFileMove.enabled": "always",
+  "js/ts.inlayHints.parameterNames.enabled": "literals",
+  "js/ts.inlayHints.variableTypes.enabled": false
 }
