@@ -68,10 +68,10 @@ export const CommentsSection: React.FC<Props> = ({ postId }) => {
 
 	return (
 		<section className="rounded-xl border border-border-soft bg-surface p-5 shadow-sm">
-			<h2 className="font-display text-lg font-semibold tracking-tight text-slate-50">Comments</h2>
+			<h2 className="font-display text-lg font-semibold tracking-tight text-text">Comments</h2>
 
 			{status === "loading" && comments.length === 0 && (
-				<p className="mt-2 text-sm text-slate-400">Loading comments...</p>
+				<p className="mt-2 text-sm text-muted">Loading comments...</p>
 			)}
 
 			{error && <p className="mt-2 text-sm text-red-300">{error}</p>}
@@ -88,23 +88,23 @@ export const CommentsSection: React.FC<Props> = ({ postId }) => {
 							className="rounded-lg border border-border-soft bg-bg/70 p-3 text-sm"
 						>
 							<div className="flex items-center justify-between">
-								<span className="font-medium text-slate-100">
+								<span className="font-medium text-text">
 									{comment.author?.username ?? "Unknown user"}
 								</span>
 								{comment.createdAt && (
-									<span className="text-xs text-slate-400">
+									<span className="text-xs text-muted">
 										{new Date(comment.createdAt).toLocaleString()}
 										{comment.isEdited && " · edited"}
 									</span>
 								)}
 							</div>
 
-							{!isEditing && <p className="mt-2 text-slate-300">{comment.content}</p>}
+							{!isEditing && <p className="mt-2 text-text">{comment.content}</p>}
 
 							{isEditing && (
 								<form onSubmit={handleUpdate} className="mt-2 space-y-2">
 									<textarea
-										className="w-full rounded-md border border-border-soft bg-bg/70 p-2 text-sm text-slate-100"
+										className="w-full rounded-md border border-border-soft bg-bg/70 p-2 text-sm text-text"
 										rows={2}
 										value={editingContent}
 										onChange={(e) => setEditingContent(e.target.value)}
@@ -119,7 +119,7 @@ export const CommentsSection: React.FC<Props> = ({ postId }) => {
 										<button
 											type="button"
 											onClick={cancelEditing}
-											className="rounded-md border border-border-soft px-3 py-1.5 text-xs font-medium text-slate-300"
+											className="rounded-md border border-border-soft px-3 py-1.5 text-xs font-medium text-muted"
 										>
 											Cancel
 										</button>
@@ -129,18 +129,18 @@ export const CommentsSection: React.FC<Props> = ({ postId }) => {
 
 							{/* Actions – you may want to only show for own comments; you can pass currentUserId and compare */}
 							{!isEditing && isOwnComment && (
-								<div className="mt-2 flex gap-3 text-xs text-slate-400">
+								<div className="mt-2 flex gap-3 text-xs text-muted">
 									<button
 										type="button"
 										onClick={() => startEditing(comment.id, comment.content)}
-										className="hover:text-slate-100"
+										className="hover:text-text"
 									>
 										Edit
 									</button>
 									<button
 										type="button"
 										onClick={() => handleDelete(comment.id)}
-										className="hover:text-slate-100"
+										className="hover:text-text"
 									>
 										Delete
 									</button>
@@ -151,14 +151,14 @@ export const CommentsSection: React.FC<Props> = ({ postId }) => {
 				})}
 
 				{comments.length === 0 && status !== "loading" && !error && (
-					<p className="text-sm text-slate-400">No comments yet.</p>
+					<p className="text-sm text-muted">No comments yet.</p>
 				)}
 			</div>
 
 			{/* New comment */}
 			<form onSubmit={handleSubmit} className="mt-4 space-y-2">
 				<textarea
-					className="w-full rounded-md border border-border-soft bg-bg/70 p-2 text-sm text-slate-100"
+					className="w-full rounded-md border border-border-soft bg-bg/70 p-2 text-sm text-text"
 					rows={3}
 					placeholder="Write a comment..."
 					value={newContent}

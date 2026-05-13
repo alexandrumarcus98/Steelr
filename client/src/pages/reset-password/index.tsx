@@ -81,8 +81,6 @@ const ResetPassword: React.FC = () => {
 		};
 	}, [token]);
 
-	console.log(isLoading);
-
 	const onSubmit = async (data: ResetPasswordFormData) => {
 		try {
 			await api.post(PASSWORD_RESET_ENDPOINT, {
@@ -114,12 +112,12 @@ const ResetPassword: React.FC = () => {
 				</div>
 			)}
 
-			<div className="min-h-screen min-w-full bg-bg px-4 py-8 text-slate-100 transition-colors duration-200 sm:px-8 lg:px-16">
+			<div className="min-h-screen min-w-full bg-bg px-4 py-8 text-text transition-colors duration-200 sm:px-8 lg:px-16">
 				<div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-center">
-					<h1 className="font-display w-full text-center text-4xl font-semibold tracking-tight text-slate-50 sm:text-6xl">
+					<h1 className="font-display w-full text-center text-4xl font-semibold tracking-tight text-text sm:text-6xl">
 						Choose a new password
 					</h1>
-					<p className="mt-6 w-full text-center text-base leading-7 text-slate-300 sm:text-xl">
+					<p className="mt-6 w-full text-center text-base leading-7 text-muted sm:text-xl">
 						Enter your new password below to complete the reset process.
 					</p>
 
@@ -136,17 +134,14 @@ const ResetPassword: React.FC = () => {
 							noValidate
 						>
 							<div>
-								<label
-									htmlFor="password"
-									className="mb-1.5 block text-sm font-medium text-slate-300"
-								>
+								<label htmlFor="password" className="mb-1.5 block text-sm font-medium text-muted">
 									New password
 								</label>
 								<input
 									type="password"
 									id="password"
 									placeholder="Create a new password"
-									className="w-full rounded-xl border border-border-soft bg-surface/80 px-3.5 py-2.5 text-sm text-slate-100 outline-none transition-all duration-300 placeholder:text-slate-500 focus:border-cyan focus:ring-2 focus:ring-cyan/15"
+									className="w-full rounded-xl border border-border-soft bg-surface/80 px-3.5 py-2.5 text-sm text-text outline-none transition-all duration-300 placeholder:text-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15"
 									{...register("password")}
 								/>
 								{errors.password && (
@@ -157,7 +152,7 @@ const ResetPassword: React.FC = () => {
 							<div>
 								<label
 									htmlFor="confirmPassword"
-									className="mb-1.5 block text-sm font-medium text-slate-300"
+									className="mb-1.5 block text-sm font-medium text-muted"
 								>
 									Confirm password
 								</label>
@@ -165,7 +160,7 @@ const ResetPassword: React.FC = () => {
 									type="password"
 									id="confirmPassword"
 									placeholder="Repeat your new password"
-									className="w-full rounded-xl border border-border-soft bg-surface/80 px-3.5 py-2.5 text-sm text-slate-100 outline-none transition-all duration-300 placeholder:text-slate-500 focus:border-cyan focus:ring-2 focus:ring-cyan/15"
+									className="w-full rounded-xl border border-border-soft bg-surface/80 px-3.5 py-2.5 text-sm text-text outline-none transition-all duration-300 placeholder:text-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15"
 									{...register("confirmPassword")}
 								/>
 								{errors.confirmPassword && (
@@ -189,12 +184,12 @@ const ResetPassword: React.FC = () => {
 						</form>
 					)}
 
-					<p className="mt-6 text-center text-sm text-slate-400">
+					<p className="mt-6 text-center text-sm text-muted">
 						Remembered your password?{" "}
 						<Link
 							to="/login"
 							state={{ from: pathname }}
-							className="font-medium text-slate-100 transition-all duration-300 hover:opacity-70"
+							className="font-medium text-text transition-all duration-300 hover:opacity-70"
 						>
 							Sign in
 						</Link>

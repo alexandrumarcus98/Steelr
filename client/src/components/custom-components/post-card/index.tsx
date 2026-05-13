@@ -12,7 +12,7 @@ interface IPostCardProps {
 const PostCard = ({ title, posts, link, status }: IPostCardProps) => (
 	<div className="rounded-2xl border border-border-soft bg-surface/90 p-6 shadow-sm">
 		<div className="mb-4 flex items-center justify-between">
-			<h3 className="text-lg font-semibold text-slate-50">{title}</h3>
+			<h3 className="text-lg font-semibold text-text">{title}</h3>
 		</div>
 
 		{status === "loading" ? (
@@ -31,7 +31,7 @@ const PostCard = ({ title, posts, link, status }: IPostCardProps) => (
 						<p className="truncate text-sm font-medium text-slate-800">
 							{post.content.substring(0, 60)}...
 						</p>
-						<div className="mt-2 flex gap-4 text-xs text-slate-400">
+						<div className="mt-2 flex gap-4 text-xs text-muted">
 							<span>👁️ {post.viewsCount || 0}</span>
 							<span>❤️ {post.likesCount || 0}</span>
 							<span>💬 {post.commentsCount || 0}</span>
@@ -40,7 +40,7 @@ const PostCard = ({ title, posts, link, status }: IPostCardProps) => (
 				))}
 			</div>
 		) : (
-			<p className="mb-4 text-sm text-slate-400">No posts yet</p>
+			<p className="mb-4 text-sm text-muted">No posts yet</p>
 		)}
 
 		<Link

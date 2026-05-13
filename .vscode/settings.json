@@ -1,77 +1,70 @@
 {
-  // ── Copilot ──────────────────────────────────────────────────
-  "github.copilot.enable": {
-    "*": true,
-    "plaintext": false,
-    "markdown": false,
-    "scminput": false
-  },
-  "github.copilot.chat.codeGeneration.useInstructionFiles": true,
-  "chat.instructionsFilesLocations": {
-    ".github/instructions": true
-  },
-  "chat.promptFilesLocations": {
-    ".github/prompts": true
-  },
-  // chat.includeApplyingInstructions was deprecated → replaced by chat.includeReferencedInstructions
-  "chat.includeReferencedInstructions": true,
-  "github.copilot.chat.localeOverride": "en",
-  "github.copilot.chat.terminalChatLocation": "chatView",
-  "chat.checkpoints.enabled": true,
-  "github.copilot.editor.enableCodeActions": true,
-  "github.copilot.renameSuggestions.triggerAutomatically": true,
+	// ── Copilot ──────────────────────────────────────────────────
+	"github.copilot.enable": {
+		"*": true,
+		"plaintext": false,
+		"markdown": false,
+		"scminput": false
+	},
+	"github.copilot.chat.codeGeneration.useInstructionFiles": true,
+	"chat.instructionsFilesLocations": {
+		".github/instructions": true
+	},
+	"chat.promptFilesLocations": {
+		".github/prompts": true
+	},
+	// chat.includeApplyingInstructions was deprecated → replaced by chat.includeReferencedInstructions
+	"chat.includeReferencedInstructions": true,
+	"github.copilot.chat.localeOverride": "en",
+	"github.copilot.chat.terminalChatLocation": "chatView",
+	"chat.checkpoints.enabled": true,
+	"github.copilot.editor.enableCodeActions": true,
+	"github.copilot.renameSuggestions.triggerAutomatically": true,
 
-  // ── Editor ────────────────────────────────────────────────────
-  "editor.tabSize": 2,
-  "editor.insertSpaces": false,
-  "editor.detectIndentation": false,
-  "editor.formatOnSave": true,
-  "editor.formatOnPaste": true,
-  "editor.formatOnType": false,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "never"
-  },
-  "editor.rulers": [100, 120],
-  "editor.wordWrap": "on",
-  "editor.inlineSuggest.syntaxHighlightingEnabled": true,
-  "editor.inlineSuggest.showToolbar": "onHover",
-  "editor.inlineSuggest.minShowDelay": 0,
+	// ── Editor ────────────────────────────────────────────────────
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.formatOnSave": true,
+	"editor.formatOnPaste": true,
+	"editor.formatOnType": false,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.eslint": "explicit",
+		"source.organizeImports": "never"
+	},
+	"editor.wordWrap": "on",
+	"editor.inlineSuggest.syntaxHighlightingEnabled": true,
+	"editor.inlineSuggest.showToolbar": "onHover",
+	"editor.inlineSuggest.minShowDelay": 0,
 
-  // ── Files ─────────────────────────────────────────────────────
-  "files.eol": "\n",
-  "files.insertFinalNewline": true,
-  "files.trimTrailingWhitespace": true,
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/dist": true,
-    "**/coverage": true
-  },
+	// ── Files ─────────────────────────────────────────────────────
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"files.trimTrailingWhitespace": true,
+	"files.exclude": {
+		"**/node_modules": true,
+		"**/dist": true,
+		"**/coverage": true
+	},
 
-  // ── ESLint ────────────────────────────────────────────────────
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
-  "eslint.packageManager": "pnpm",
-  // { "mode": "auto" } lets ESLint find the nearest config per subdirectory automatically
-  // avoids having to manually list ["client", "server"] (stale-prone)
-  "eslint.workingDirectories": [{ "mode": "auto" }],
-  // eslint.useFlatConfig removed — ESLint ≥8.57 auto-detects flat config (eslint.config.*),
-  // no explicit flag needed (was eslint.experimental.useFlatConfig before 3.0.10)
+	// ── ESLint ────────────────────────────────────────────────────
+	"eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+	// { "mode": "auto" } lets ESLint find the nearest config per subdirectory automatically
+	// avoids having to manually list ["client", "server"] (stale-prone)
+	"eslint.workingDirectories": [{ "mode": "auto" }],
+	// eslint.useFlatConfig removed — ESLint ≥8.57 auto-detects flat config (eslint.config.*),
+	// no explicit flag needed (was eslint.experimental.useFlatConfig before 3.0.10)
 
-  // ── Prettier ──────────────────────────────────────────────────
-  "prettier.requireConfig": true,
-  "prettier.useEditorConfig": true,
+	// ── Prettier ──────────────────────────────────────────────────
+	"prettier.requireConfig": true,
+	"prettier.useEditorConfig": true,
 
-  // ── TypeScript / JavaScript ───────────────────────────────────
-  // typescript.* and javascript.* settings unified under js/ts.* as of VS Code 1.110
-  // Old typescript.* keys still work but are deprecated and will be removed in a future release
-  "js/ts.preferences.importModuleSpecifier": "relative",
-  "js/ts.updateImportsOnFileMove.enabled": "always",
-  "js/ts.inlayHints.parameterNames.enabled": "literals",
-  "js/ts.inlayHints.variableTypes.enabled": false
+	// ── TypeScript / JavaScript ───────────────────────────────────
+	// typescript.* and javascript.* settings unified under js/ts.* as of VS Code 1.110
+	// Old typescript.* keys still work but are deprecated and will be removed in a future release
+	"js/ts.preferences.importModuleSpecifier": "relative",
+	"js/ts.updateImportsOnFileMove.enabled": "always",
+	"js/ts.inlayHints.parameterNames.enabled": "literals",
+	"js/ts.inlayHints.variableTypes.enabled": false
 }

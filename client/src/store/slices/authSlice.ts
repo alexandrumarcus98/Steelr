@@ -1,6 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-import { IUser } from "@/store/types/auth";
+import type { IUser } from "@/store/types/auth";
 
 import api from "@/lib/api";
 import { setAuthToken as setApiToken } from "@/lib/api";

@@ -27,7 +27,7 @@ const PostPage: React.FC = () => {
 	};
 
 	if (status === "loading" && !post) {
-		return <div className="p-4 text-sm text-slate-400">Loading post...</div>;
+		return <div className="p-4 text-sm text-muted">Loading post...</div>;
 	}
 
 	if (error) {
@@ -39,7 +39,7 @@ const PostPage: React.FC = () => {
 	}
 
 	if (!post) {
-		return <div className="p-4 text-sm text-slate-400">Post not found.</div>;
+		return <div className="p-4 text-sm text-muted">Post not found.</div>;
 	}
 
 	return (

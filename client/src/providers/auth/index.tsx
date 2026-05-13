@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useEffect } from "react";
+import type { ReactNode } from "react";
+import React, { createContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
 	clearAuth,
@@ -12,7 +13,7 @@ import {
 import api, { setAuthToken } from "@/lib/api";
 import { normalizeApiError } from "@/lib/apiError";
 
-import { IUser } from "@/store/types/auth";
+import type { IUser } from "@/store/types/auth";
 interface ILoginResult {
 	requiresOTP: boolean;
 	message: string;

@@ -25,7 +25,7 @@ const Users: React.FC = () => {
 		return <div className="text-sm text-red-300">Access denied. Admin role required.</div>;
 	}
 	if (status === "loading") {
-		return <div className="text-sm text-slate-600">Loading users...</div>;
+		return <div className="text-sm text-muted">Loading users...</div>;
 	}
 	if (status === "failed") {
 		return <div className="text-sm text-red-300">{error ?? "Failed to load users"}</div>;
@@ -33,25 +33,25 @@ const Users: React.FC = () => {
 
 	return (
 		<div className="mx-auto max-w-6xl">
-			<h1 className="font-display mb-8 text-3xl font-bold text-slate-50">User Management</h1>
+			<h1 className="font-display mb-8 text-3xl font-bold text-text">User Management</h1>
 
 			<div className="overflow-hidden rounded-lg border border-border-soft bg-surface shadow-md">
 				<table className="w-full">
 					<thead className="bg-white/5">
 						<tr>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
 								Username
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
 								Email
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
 								Roles
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
 								Status
 							</th>
-							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500 ">
+							<th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted">
 								Actions
 							</th>
 						</tr>
@@ -59,14 +59,14 @@ const Users: React.FC = () => {
 					<tbody className="divide-y divide-border-soft">
 						{users.map((u) => (
 							<tr key={u.id}>
-								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-slate-100">
+								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-text">
 									{u.username}
 								</td>
-								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">{u.email}</td>
-								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-text">{u.email}</td>
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-text">
 									{u.roles?.join(", ") || "user"}
 								</td>
-								<td className="whitespace-nowrap px-6 py-4 text-sm text-slate-300">
+								<td className="whitespace-nowrap px-6 py-4 text-sm text-text">
 									{u.isActive ? "Active" : "Inactive"} / {u.isVerified ? "Verified" : "Unverified"}
 								</td>
 								<td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
