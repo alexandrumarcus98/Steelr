@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import MoonIcon from "@/components/custom-components/moon-icon";
-import SunIcon from "@/components/custom-components/sun-icon";
+import SunIcon from "@/components/custom-components/moon-icon";
 
 interface IHeaderProps {
 	isAuthenticated: boolean;

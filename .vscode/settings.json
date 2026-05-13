@@ -33,7 +33,6 @@
 		"source.fixAll.eslint": "explicit",
 		"source.organizeImports": "never"
 	},
-	"editor.rulers": [100, 120],
 	"editor.wordWrap": "on",
 	"editor.inlineSuggest.syntaxHighlightingEnabled": true,
 	"editor.inlineSuggest.showToolbar": "onHover",

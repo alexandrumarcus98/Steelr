@@ -185,14 +185,14 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 	return (
 		<div className="mx-auto max-w-3xl">
 			<div className="mb-1 px-1">
-				<h1 className="font-display text-xl font-bold text-slate-50">Home Feed</h1>
-				<p className="mt-0.5 text-sm text-slate-500">Recent posts from your network</p>
+				<h1 className="font-display text-xl font-bold text-text">Home Feed</h1>
+				<p className="mt-0.5 text-sm text-muted">Recent posts from your network</p>
 			</div>
 
 			<section className="mt-5 rounded-2xl border border-border-soft bg-surface p-5 shadow-sm">
 				<div className="flex flex-col gap-1">
-					<h2 className="text-base font-semibold text-slate-50">Find people nearby</h2>
-					<p className="text-sm text-slate-500">
+					<h2 className="text-base font-semibold text-text">Find people nearby</h2>
+					<p className="text-sm text-muted">
 						Search by name, city, country, or IP. Nearby people are ranked first.
 						{user?.location?.country
 							? ` Your profile location: ${user.location.city ? `${user.location.city}, ` : ""}${user.location.country}.`
@@ -210,11 +210,11 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 						value={searchQuery}
 						onChange={(event) => setSearchQuery(event.target.value)}
 						placeholder="Search people by name or location"
-						className="w-full rounded-xl border border-border-soft bg-bg/70 px-3.5 py-2.5 text-sm outline-none transition-all duration-300 placeholder:text-slate-500 focus:border-cyan focus:ring-2 focus:ring-cyan/15"
+						className="w-full rounded-xl border border-border-soft bg-bg/70 px-3.5 py-2.5 text-sm outline-none transition-all duration-300 placeholder:text-muted focus:border-cyan focus:ring-2 focus:ring-cyan/15"
 					/>
 				</div>
 
-				{searchStatus === "loading" && <p className="mt-3 text-sm text-slate-500">Searching...</p>}
+				{searchStatus === "loading" && <p className="mt-3 text-sm text-muted">Searching...</p>}
 
 				{searchError && <p className="mt-3 text-sm text-red-600">{searchError}</p>}
 
@@ -256,7 +256,7 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 					))}
 
 					{searchStatus !== "loading" && searchResults.length === 0 && !searchError && (
-						<p className="text-sm text-slate-500">No users found.</p>
+						<p className="text-sm text-muted">No users found.</p>
 					)}
 				</div>
 			</section>
@@ -268,7 +268,7 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 						type="button"
 						onClick={() => dispatch(setSort(tab))}
 						className={`relative px-5 py-3 text-sm font-medium transition-colors duration-200 ${
-							sort === tab ? "text-slate-100" : "text-slate-400 hover:text-slate-100"
+							sort === tab ? "text-text" : "text-muted hover:text-text"
 						}`}
 					>
 						{tab === "latest" ? "For you" : "Most viewed"}
@@ -320,7 +320,7 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 										{post.createdAt && (
 											<>
 												{" · "}
-												<span className="text-slate-500">{formatRelativeTime(post.createdAt)}</span>
+												<span className="text-muted">{formatRelativeTime(post.createdAt)}</span>
 											</>
 										)}
 									</p>
@@ -330,7 +330,7 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 
 						<Link to={`/posts/${post.id}`} className="group/link block">
 							{post.title && (
-								<h2 className="mb-1.5 text-base font-semibold transition-colors duration-200 group-hover/link:text-slate-300">
+								<h2 className="mb-1.5 text-base font-semibold transition-colors duration-200 group-hover/link:text-text">
 									{post.title}
 								</h2>
 							)}
@@ -354,7 +354,7 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 								className={`ml-auto flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all duration-200 ${
 									post.isLiked
 										? "bg-cyan/10 text-cyan ring-1 ring-cyan/20 hover:bg-cyan/15"
-										: "text-slate-400 hover:bg-white/5"
+										: "text-muted hover:bg-white/5"
 								}`}
 							>
 								<HeartIcon filled={!!post.isLiked} />
@@ -371,7 +371,7 @@ const FeedComponent: React.FC = (): React.ReactNode => {
 						type="button"
 						onClick={handleLoadMore}
 						disabled={status === "loading"}
-						className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-medium text-slate-200 transition-all duration-200 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+						className="rounded-full border border-border-soft bg-surface px-6 py-2.5 text-sm font-medium text-text transition-all duration-200 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
 					>
 						{status === "loading" ? "Loading…" : "Load more"}
 					</button>

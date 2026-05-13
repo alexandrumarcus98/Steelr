@@ -22,7 +22,7 @@ const Profile: React.FC = () => {
 	});
 
 	if (!user) {
-		return <div className="text-sm text-slate-400">Please log in to view your profile.</div>;
+		return <div className="text-sm text-muted">Please log in to view your profile.</div>;
 	}
 
 	const handleSubmit = async (e: React.FormEvent) => {
@@ -55,11 +55,11 @@ const Profile: React.FC = () => {
 
 	return (
 		<div className="mx-auto max-w-2xl">
-			<h1 className="font-display mb-8 text-3xl font-bold text-slate-50">Profile</h1>
+			<h1 className="font-display mb-8 text-3xl font-bold text-text">Profile</h1>
 
 			<div className="rounded-lg border border-border-soft bg-surface p-6 shadow-md">
 				<div className="mb-6 flex items-center justify-between">
-					<h2 className="text-xl font-semibold text-slate-50">Personal Information</h2>
+					<h2 className="text-xl font-semibold text-text">Personal Information</h2>
 					<button
 						onClick={() => setIsEditing(!isEditing)}
 						className="rounded bg-cyan px-4 py-2 text-bg hover:opacity-90"
@@ -71,40 +71,40 @@ const Profile: React.FC = () => {
 				{isEditing ? (
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<div>
-							<label className="mb-1 block text-sm font-medium text-slate-300">Username</label>
+							<label className="mb-1 block text-sm font-medium text-muted">Username</label>
 							<input
 								type="text"
 								value={formData.username}
 								onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-								className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan/15"
+								className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-cyan/15"
 							/>
 						</div>
 						<div>
-							<label className="mb-1 block text-sm font-medium text-slate-300">Email</label>
+							<label className="mb-1 block text-sm font-medium text-muted">Email</label>
 							<input
 								type="email"
 								value={formData.email}
 								onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-								className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan/15"
+								className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-cyan/15"
 							/>
 						</div>
 						<div className="grid gap-4 sm:grid-cols-2">
 							<div>
-								<label className="mb-1 block text-sm font-medium text-slate-300">City</label>
+								<label className="mb-1 block text-sm font-medium text-muted">City</label>
 								<input
 									type="text"
 									value={formData.city}
 									onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-									className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan/15"
+									className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-cyan/15"
 								/>
 							</div>
 							<div>
-								<label className="mb-1 block text-sm font-medium text-slate-300">Country</label>
+								<label className="mb-1 block text-sm font-medium text-muted">Country</label>
 								<input
 									type="text"
 									value={formData.country}
 									onChange={(e) => setFormData({ ...formData, country: e.target.value })}
-									className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-slate-100 focus:outline-none focus:ring-2 focus:ring-cyan/15"
+									className="w-full rounded-md border border-border-soft bg-bg/70 px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-cyan/15"
 								/>
 							</div>
 							<div>
@@ -138,27 +138,27 @@ const Profile: React.FC = () => {
 				) : (
 					<div className="space-y-4">
 						<div>
-							<label className="block text-sm font-medium text-slate-300">Username</label>
-							<p className="mt-1 text-slate-100">{user.username}</p>
+							<label className="block text-sm font-medium text-muted">Username</label>
+							<p className="mt-1 text-text">{user.username}</p>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-slate-300">Email</label>
-							<p className="mt-1 text-slate-100">{user.email}</p>
+							<label className="block text-sm font-medium text-muted">Email</label>
+							<p className="mt-1 text-text">{user.email}</p>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-slate-300">Roles</label>
-							<p className="mt-1 text-slate-100">{user.roles?.join(", ") || "user"}</p>
+							<label className="block text-sm font-medium text-muted">Roles</label>
+							<p className="mt-1 text-text">{user.roles?.join(", ") || "user"}</p>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-slate-300">Status</label>
-							<p className="mt-1 text-slate-100">
+							<label className="block text-sm font-medium text-muted">Status</label>
+							<p className="mt-1 text-text">
 								{user.isActive ? "Active" : "Inactive"} /{" "}
 								{user.isVerified ? "Verified" : "Unverified"}
 							</p>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-slate-300">Location</label>
-							<p className="mt-1 text-slate-100">
+							<label className="block text-sm font-medium text-muted">Location</label>
+							<p className="mt-1 text-text">
 								{user.location?.city || user.location?.country
 									? [
 											user.location?.city,
@@ -172,8 +172,8 @@ const Profile: React.FC = () => {
 							</p>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-slate-300">Friends</label>
-							<p className="mt-1 text-slate-100">{user.friendsCount}</p>
+							<label className="block text-sm font-medium text-muted">Friends</label>
+							<p className="mt-1 text-text">{user.friendsCount}</p>
 						</div>
 					</div>
 				)}

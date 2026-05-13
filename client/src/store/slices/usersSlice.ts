@@ -1,7 +1,8 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 import { fetchUsers, searchUsers } from "@/store/api/usersApi";
-import { IUsersState } from "@/store/types/users";
+import type { IUsersState } from "@/store/types/users";
 
 export const initialState: IUsersState = {
 	items: [],

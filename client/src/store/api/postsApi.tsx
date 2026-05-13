@@ -3,7 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import api from "@/lib/api";
 
 import type { IPostItem } from "@/store/types/posts";
-import { IFetchPostsParams, IFetchPostsResult } from "@/store/types/posts";
+import type { IFetchPostsParams, IFetchPostsResult } from "@/store/types/posts";
 
 const POSTS_ENDPOINT = import.meta.env.VITE_POSTS_ENDPOINT || "/posts";
 
